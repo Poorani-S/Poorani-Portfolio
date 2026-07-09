@@ -518,7 +518,7 @@ export default function App() {
             <button onClick={() => scrollTo("projects")} className="flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 to-violet-600 px-6 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
               View Projects <ArrowRight size={15} />
             </button>
-            <a href="/resume.pdf" download className="flex items-center gap-2 border border-white/15 px-6 py-3 rounded-full text-sm font-semibold hover:bg-white/5 transition-colors">
+            <a href="/Poorani_S_Resume_.pdf" download className="flex items-center gap-2 border border-white/15 px-6 py-3 rounded-full text-sm font-semibold hover:bg-white/5 transition-colors">
               <Download size={15} /> Resume
             </a>
           </div>
@@ -672,7 +672,7 @@ export default function App() {
             <a href="https://www.linkedin.com/in/poorani-s-046357340" target="_blank" rel="noreferrer" className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center hover:bg-white/10 transition-colors"><Linkedin size={17} /></a>
             <a href="https://github.com/Poorani-S" target="_blank" rel="noreferrer" className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center hover:bg-white/10 transition-colors"><Github size={17} /></a>
           </div>
-          <a href="/resume.pdf" download className="mt-8 inline-flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 to-violet-600 px-6 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
+          <a href="/Poorani_S_Resume_.pdf" download className="mt-8 inline-flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 to-violet-600 px-6 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
             <Download size={15} /> Download Resume
           </a>
         </TiltCard>
