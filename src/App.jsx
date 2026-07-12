@@ -32,12 +32,12 @@ const SKILLS = [
   { group: "BI & Visualization", items: ["Power BI", "Business Intelligence", "Tableau", "Excel", "DAX", "Data Storytelling", "Dashboard Design"] },
   { group: "Machine Learning", items: ["Scikit-Learn", "Classification", "Regression", "Random Forest", "Feature Engineering", "Model Evaluation"] },
   { group: "Databases", items: ["MySQL", "MongoDB"] },
-  { group: "Web Development", items: ["Flask", "HTML", "CSS", "React", "Node.js", "Express.js"] },
-  { group: "Tools", items: ["Git", "GitHub", "VS Code", "Jupyter Notebook","Antigravity"] },
+  { group: "Web Development", items: ["Flask", "HTML", "CSS", "React", "Node.js"] },
+  { group: "Tools", items: ["Git", "GitHub", "VSCode","Monday.com","Jupyter Notebook","Antigravity"] },
 ];
 
 const EXPERIENCE = [
-  { role: "Data Analyst Intern", company: "Bluestock Fintech", dates: "01/2026 - Present",
+  { role: "Data Analyst Intern", company: "Bluestock Fintech", dates: "06/2026 - Present",
     bullets: ["Delivered business insights through financial and operational data analysis, KPI reporting, and interactive dashboards.",
       "Enhanced data quality and decision-making using data transformation, validation, and business intelligence practices."] },
   { role: "Machine Learning Intern", company: "Adroit Technologies (IBM Career Education)", dates: "05/2026",
@@ -126,6 +126,7 @@ const CERTS_DETAILED = [
   { issuer: "INFOSYS", issuerColor: "#3b82f6", title: "Computer Fundamentals", category: "Fundamentals" },
   { issuer: "DELOITTE", issuerColor: "#8bc34a", title: "Data Analytics Job Simulation", category: "Data Analytics" },
   { issuer: "DELOITTE", issuerColor: "#8bc34a", title: "Cyber Job Simulation", category: "Security" },
+  { issuer: "MONDAY.COM", issuerColor: "#ff3d57", title: "Professional Services Roles Certification Pathway", category: "Professional Services" },
 ];
 
 function ParticleField() {
@@ -518,7 +519,7 @@ export default function App() {
             <button onClick={() => scrollTo("projects")} className="flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 to-violet-600 px-6 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
               View Projects <ArrowRight size={15} />
             </button>
-            <a href="/Poorani_S_Resume_.pdf" download className="flex items-center gap-2 border border-white/15 px-6 py-3 rounded-full text-sm font-semibold hover:bg-white/5 transition-colors">
+            <a href="/Poorani_S_Resume.pdf" download className="flex items-center gap-2 border border-white/15 px-6 py-3 rounded-full text-sm font-semibold hover:bg-white/5 transition-colors">
               <Download size={15} /> Resume
             </a>
           </div>
@@ -672,7 +673,7 @@ export default function App() {
             <a href="https://www.linkedin.com/in/poorani-s-046357340" target="_blank" rel="noreferrer" className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center hover:bg-white/10 transition-colors"><Linkedin size={17} /></a>
             <a href="https://github.com/Poorani-S" target="_blank" rel="noreferrer" className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center hover:bg-white/10 transition-colors"><Github size={17} /></a>
           </div>
-          <a href="/Poorani_S_Resume_.pdf" download className="mt-8 inline-flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 to-violet-600 px-6 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
+          <a href="/Poorani_S_Resume.pdf" download className="mt-8 inline-flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 to-violet-600 px-6 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
             <Download size={15} /> Download Resume
           </a>
         </TiltCard>
