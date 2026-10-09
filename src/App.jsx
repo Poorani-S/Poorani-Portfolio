@@ -1007,7 +1007,7 @@ export default function App() {
           <div className="absolute -bottom-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl px-4 py-2 flex items-center gap-3">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-xs text-violet-200">
-              Coimbatore, Tamil Nadu • <span className="text-fuchsia-300 font-mono">241cd030@srcw.ac.in</span>
+              Coimbatore, Tamil Nadu • <span className="text-fuchsia-300 font-mono">poorani0307@gmail.com</span>
             </span>
           </div>
         </div>
@@ -1548,10 +1548,10 @@ export default function App() {
 
           <div className="mt-8 flex flex-wrap justify-center gap-3.5">
             <a
-              href="mailto:241cd030@srcw.ac.in"
+              href="mailto:poorani0307@gmail.com"
               className="flex items-center gap-2.5 border border-white/15 bg-white/5 backdrop-blur-md px-5 py-3 rounded-full text-xs sm:text-sm font-medium hover:bg-white/10 hover:border-fuchsia-400 transition-all"
             >
-              <Mail size={15} className="text-fuchsia-400" /> 241cd030@srcw.ac.in
+              <Mail size={15} className="text-fuchsia-400" /> poorani0307@gmail.com
             </a>
             <a
               href="tel:6380045604"
