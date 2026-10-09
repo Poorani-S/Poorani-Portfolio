@@ -9,19 +9,24 @@
   }
   
   body {
-    font-family: "Inter", ui-sans-serif, system-ui;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: #07040f;
-    color: #ffffff;
+    color: #f4f4f6;
     overflow-x: hidden;
   }
 
+  h1, h2, h3, h4, .font-heading {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    letter-spacing: -0.02em;
+  }
+
   ::selection {
-    background: #d946ef;
+    background: #a855f7;
     color: #ffffff;
   }
 }
 
-/* Lenis Recommended CSS */
+/* Lenis Smooth Scroll Recommended CSS */
 html.lenis, html.lenis body {
   height: auto;
 }
@@ -38,53 +43,53 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
-/* Custom Scrollbar */
+/* Custom Sleek Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 7px;
 }
 ::-webkit-scrollbar-track {
   background: #07040f;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(168, 85, 247, 0.3);
+  background: rgba(139, 92, 246, 0.25);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(217, 70, 239, 0.6);
+  background: rgba(168, 85, 247, 0.5);
 }
 
-/* Background Parallax Orbs */
+/* Background Atmosphere Orbs - Soft & Deep */
 .orb {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(85px);
-  opacity: 0.5;
+  filter: blur(100px);
+  opacity: 0.35;
   will-change: transform;
   pointer-events: none;
 }
 .orb-1 {
-  width: 460px;
-  height: 460px;
-  top: -10%;
-  left: -8%;
-  background: radial-gradient(circle at 30% 30%, rgba(217, 70, 239, 0.55), transparent 70%);
-}
-.orb-2 {
   width: 520px;
   height: 520px;
+  top: -12%;
+  left: -10%;
+  background: radial-gradient(circle at 35% 35%, rgba(168, 85, 247, 0.4), transparent 70%);
+}
+.orb-2 {
+  width: 560px;
+  height: 560px;
   top: 35%;
-  right: -12%;
-  background: radial-gradient(circle at 60% 40%, rgba(124, 58, 237, 0.5), transparent 70%);
+  right: -14%;
+  background: radial-gradient(circle at 60% 40%, rgba(99, 102, 241, 0.35), transparent 70%);
 }
 .orb-3 {
-  width: 420px;
-  height: 420px;
-  bottom: -5%;
-  left: 25%;
-  background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.45), transparent 70%);
+  width: 480px;
+  height: 480px;
+  bottom: -6%;
+  left: 20%;
+  background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.3), transparent 70%);
 }
 
-/* Shimmer Sweep Animation for Skill Bars */
+/* Shimmer Sweep Animation for Skill Progress Bars */
 @keyframes shimmerSweep {
   0% {
     transform: translateX(-150%);
@@ -95,21 +100,7 @@ html.lenis, html.lenis body {
 }
 
 .animate-shimmer {
-  animation: shimmerSweep 2.8s ease-in-out infinite;
-}
-
-/* Floating Sine Wobble for Skill Chips */
-@keyframes sineWobble {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-4px) rotate(0.6deg);
-  }
-}
-
-.animate-wobble {
-  animation: sineWobble 4.5s ease-in-out infinite;
+  animation: shimmerSweep 3s ease-in-out infinite;
 }
 
 /* Contact Shifting Text Gradient */
@@ -142,7 +133,6 @@ html.lenis, html.lenis body {
     animation: none !important;
   }
   .animate-shimmer,
-  .animate-wobble,
   .animate-gradient-text {
     animation: none !important;
   }

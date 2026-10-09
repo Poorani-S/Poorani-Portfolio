@@ -10,7 +10,7 @@ import {
   BarChart3, TrendingUp, Database, LayoutDashboard, Cpu, Cloud,
   GitBranch, Target, Boxes, Activity, CheckCircle2, Briefcase, Bot,
   FolderGit2, Code2, Layers, BookOpen, Star, ShieldCheck, Compass,
-  Search, FileSpreadsheet, Terminal, Zap, PieChart, LineChart
+  Search, FileSpreadsheet, Terminal, Zap, PieChart, LineChart, ChevronRight
 } from "lucide-react";
 
 import Preloader from "./components/Preloader";
@@ -19,6 +19,7 @@ import Magnetic from "./components/Magnetic";
 import Reveal, { StaggerContainer, StaggerItem } from "./components/Reveal";
 import Counter from "./components/Counter";
 import Marquee from "./components/Marquee";
+import Snowfall from "./components/Snowfall";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -292,207 +293,56 @@ const LEADERSHIP_ACHIEVEMENTS = [
   },
 ];
 
-const CERTIFICATIONS = [
-  {
-    category: "Data Analytics & BI",
-    icon: BarChart3,
-    color: "from-fuchsia-500 to-violet-500",
-    items: [
-      { name: "Deloitte Australia – Data Analytics Job Simulation", issuer: "Forage" },
-      { name: "IBM – Data Analysis with Python", issuer: "IBM" },
-      { name: "IBM – Data Visualization", issuer: "IBM" },
-      { name: "IBM – Python for Data Science", issuer: "IBM" },
-      { name: "IBM – Business Intelligence", issuer: "IBM" },
-      { name: "NoviTech – SQL", issuer: "NoviTech" },
-      { name: "NPTEL – Database Management System", issuer: "NPTEL / IIT" },
-      { name: "Nasscom – Digital Engineering", issuer: "NASSCOM / FutureSkills Prime" },
-      { name: "MongoDB – Database Fundamentals", issuer: "MongoDB University" },
-    ],
-  },
-  {
-    category: "AI & Automation",
-    icon: Cpu,
-    color: "from-violet-500 to-indigo-500",
-    items: [
-      { name: "GUVI – Generative AI", issuer: "GUVI Geek Network" },
-      { name: "UiPath Academy – Automation Developer Associate Training", issuer: "UiPath" },
-    ],
-  },
-  {
-    category: "Programming",
-    icon: Code2,
-    color: "from-indigo-500 to-cyan-500",
-    items: [
-      { name: "GUVI – Python Programming", issuer: "GUVI" },
-      { name: "Infosys – C Programming 101", issuer: "Infosys Springboard" },
-      { name: "Infosys – Computer Fundamentals", issuer: "Infosys Springboard" },
-    ],
-  },
-  {
-    category: "Cybersecurity",
-    icon: ShieldCheck,
-    color: "from-rose-500 to-red-600",
-    items: [
-      { name: "Deloitte Australia – Cyber Job Simulation", issuer: "Forage" },
-      { name: "IBM – Cybersecurity Fundamental", issuer: "IBM" },
-    ],
-  },
-  {
-    category: "Professional Services",
-    icon: Briefcase,
-    color: "from-cyan-500 to-teal-500",
-    items: [
-      { name: "Monday.com – Professional Services Roles Certification Pathway", issuer: "Monday.com" },
-    ],
-  },
+// Flat uniform list of all 17 Verified Certifications with Category Tagging
+const ALL_CERTIFICATIONS = [
+  { name: "Deloitte Australia – Data Analytics Job Simulation", issuer: "Forage", category: "Data Analytics & BI", icon: BarChart3 },
+  { name: "IBM – Data Analysis with Python", issuer: "IBM", category: "Data Analytics & BI", icon: Terminal },
+  { name: "IBM – Data Visualization", issuer: "IBM", category: "Data Analytics & BI", icon: LineChart },
+  { name: "IBM – Python for Data Science", issuer: "IBM", category: "Data Analytics & BI", icon: Terminal },
+  { name: "IBM – Business Intelligence", issuer: "IBM", category: "Data Analytics & BI", icon: BarChart3 },
+  { name: "NoviTech – SQL", issuer: "NoviTech", category: "Data Analytics & BI", icon: Database },
+  { name: "NPTEL – Database Management System", issuer: "NPTEL / IIT", category: "Data Analytics & BI", icon: Database },
+  { name: "Nasscom – Digital Engineering", issuer: "NASSCOM / FutureSkills Prime", category: "Data Analytics & BI", icon: Cpu },
+  { name: "MongoDB – Database Fundamentals", issuer: "MongoDB University", category: "Data Analytics & BI", icon: Layers },
+  { name: "GUVI – Generative AI", issuer: "GUVI Geek Network", category: "AI & Automation", icon: Bot },
+  { name: "UiPath Academy – Automation Developer Associate", issuer: "UiPath", category: "AI & Automation", icon: Cpu },
+  { name: "GUVI – Python Programming", issuer: "GUVI", category: "Programming", icon: Code2 },
+  { name: "Infosys – C Programming 101", issuer: "Infosys Springboard", category: "Programming", icon: Code2 },
+  { name: "Infosys – Computer Fundamentals", issuer: "Infosys Springboard", category: "Programming", icon: Code2 },
+  { name: "Deloitte Australia – Cyber Job Simulation", issuer: "Forage", category: "Cybersecurity & Strategy", icon: ShieldCheck },
+  { name: "IBM – Cybersecurity Fundamental", issuer: "IBM", category: "Cybersecurity & Strategy", icon: ShieldCheck },
+  { name: "Monday.com – Professional Services Roles Pathway", issuer: "Monday.com", category: "Cybersecurity & Strategy", icon: Briefcase },
 ];
 
-const DASHBOARD_METRICS = [
-  { label: "Data Records Processed", value: "50,000+", icon: Database, desc: "Fintech, Student & Sensor Data", color: "from-fuchsia-500 to-pink-500", tag: "+100% Validated" },
-  { label: "AI Model Accuracy", value: "94.0%", icon: Target, desc: "FixieAI Equipment Failure Predictor", color: "from-violet-500 to-purple-500", tag: "Industrial ML" },
-  { label: "Deep Learning Accuracy", value: "88%+", icon: Cpu, desc: "SmartWaste AI 5-Class EfficientNet", color: "from-cyan-500 to-blue-500", tag: "Grad-CAM Vision" },
+const CERT_CATEGORIES = [
+  "All Credentials",
+  "Data Analytics & BI",
+  "AI & Automation",
+  "Programming",
+  "Cybersecurity & Strategy",
 ];
 
-const TOOL_PROFICIENCY = [
-  { label: "Python", value: 94, icon: "🐍", color: "from-violet-500 to-indigo-500" },
-  { label: "SQL", value: 92, icon: "🗄️", color: "from-fuchsia-500 to-pink-500" },
-  { label: "Power BI", value: 90, icon: "📊", color: "from-amber-500 to-orange-500" },
-  { label: "Excel", value: 92, icon: "📑", color: "from-emerald-500 to-teal-500" },
-  { label: "Tableau", value: 85, icon: "📈", color: "from-cyan-500 to-blue-500" },
+const ANALYTICS_KPIS = [
+  { label: "Data Records Analyzed", value: "50,000+", desc: "Fintech, Student & Industrial Telemetry", icon: Database },
+  { label: "Predictive ML Accuracy", value: "94.0%", desc: "FixieAI Industrial Equipment Failure Classification", icon: Target },
+  { label: "Computer Vision Accuracy", value: "88%+", desc: "EfficientNet 5-Class Explainable Waste AI", icon: Cpu },
+  { label: "Industry Internships", value: "5", desc: "Production Workflows in Fintech, ML & BI", icon: Briefcase },
 ];
 
-const INTERNSHIP_MILESTONES = [
-  { company: "Hexaind", focus: "Data Science & Tableau", date: "May–Jul '25", level: 30 },
-  { company: "NoviTech", focus: "Behavior Analytics & BI", date: "Sep–Oct '25", level: 48 },
-  { company: "Kambaa", focus: "Full-Stack AI & Chatbot", date: "Dec '25–Apr '26", level: 66 },
-  { company: "IBM / Adroit", focus: "Predictive ML (94%)", date: "May '26", level: 82 },
-  { company: "Bluestock", focus: "Fintech & KPI Dashboards", date: "May–Jul '26", level: 96 },
-  { company: "Present", focus: "Ready to Deploy Impact", date: "2026+", level: 100 },
+const ANALYTICS_TOOLS = [
+  { label: "Python & Pandas", value: 94, icon: Terminal, domain: "ETL & Modeling" },
+  { label: "SQL (MySQL)", value: 92, icon: Database, domain: "Relational Queries" },
+  { label: "Power BI (DAX)", value: 90, icon: BarChart3, domain: "KPI Cockpits" },
+  { label: "Advanced Excel", value: 92, icon: FileSpreadsheet, domain: "Financial Models" },
+  { label: "Tableau Desktop", value: 85, icon: LineChart, domain: "Exploratory BI" },
 ];
 
-const TECH_PILLARS = [
-  { icon: Database, label: "SQL & MySQL", sub: "Relational Modeling", color: "text-blue-400", border: "border-blue-500/30", bg: "bg-blue-500/10" },
-  { icon: BarChart3, label: "Power BI / Tableau", sub: "Executive Cockpits", color: "text-amber-400", border: "border-amber-500/30", bg: "bg-amber-500/10" },
-  { icon: Cpu, label: "Scikit & TensorFlow", sub: "Predictive & DL Models", color: "text-fuchsia-400", border: "border-fuchsia-500/30", bg: "bg-fuchsia-500/10" },
-  { icon: Bot, label: "Hybrid RAG & LLMs", sub: "FAISS + BM25 Retrieval", color: "text-purple-400", border: "border-purple-500/30", bg: "bg-purple-500/10" },
-  { icon: Layers, label: "React & FastAPI", sub: "High-Perf Full-Stack", color: "text-cyan-400", border: "border-cyan-500/30", bg: "bg-cyan-500/10" },
-  { icon: GitBranch, label: "Git & Monday.com", sub: "Agile CI/CD & PM", color: "text-emerald-400", border: "border-emerald-500/30", bg: "bg-emerald-500/10" },
+const PIPELINE_PILLARS = [
+  { title: "Relational Modeling & SQL", desc: "Multi-table relational schema design, MySQL indexing, complex aggregations, window functions, and query optimization.", icon: Database },
+  { title: "ETL & DAX Telemetry", desc: "Automated data transformation pipelines, calculated measures, time-intelligence comparisons, and star schema architectures.", icon: BarChart3 },
+  { title: "Executive Decision Dashboards", desc: "Interactive drill-through BI reports in Power BI & Tableau with stakeholder KPI cockpits and intuitive data storytelling.", icon: LayoutDashboard },
+  { title: "Predictive Analytics & AI", desc: "Scikit-Learn classification pipelines, 94% anomaly detection models, and Hybrid RAG retrieval systems (FAISS + BM25).", icon: Cpu },
 ];
-
-/* ---------------- Particle Background Field ---------------- */
-function ParticleField() {
-  const canvasRef = useRef(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    let w, h, particles, raf;
-    const DPR = Math.min(window.devicePixelRatio || 1, 2);
-    const mouse = { x: -9999, y: -9999, active: false };
-
-    function resize() {
-      w = canvas.offsetWidth;
-      h = canvas.offsetHeight;
-      canvas.width = w * DPR;
-      canvas.height = h * DPR;
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      const count = Math.min(80, Math.floor((w * h) / 16000));
-      particles = Array.from({ length: count }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
-      }));
-    }
-
-    function onMove(e) {
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
-      mouse.active = true;
-    }
-    function onLeave() {
-      mouse.active = false;
-    }
-
-    function tick() {
-      ctx.clearRect(0, 0, w, h);
-      for (const p of particles) {
-        if (mouse.active) {
-          const dx = p.x - mouse.x,
-            dy = p.y - mouse.y;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          if (d < 140 && d > 0.001) {
-            const force = (140 - d) / 140;
-            p.vx += (dx / d) * force * 0.03;
-            p.vy += (dy / d) * force * 0.03;
-          }
-        }
-        p.vx *= 0.985;
-        p.vy *= 0.985;
-        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-        if (speed < 0.06) {
-          p.vx += (Math.random() - 0.5) * 0.03;
-          p.vy += (Math.random() - 0.5) * 0.03;
-        }
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0 || p.x > w) p.vx *= -1;
-        if (p.y < 0 || p.y > h) p.vy *= -1;
-      }
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const a = particles[i],
-            b = particles[j];
-          const dx = a.x - b.x,
-            dy = a.y - b.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 130) {
-            ctx.strokeStyle = `rgba(167,139,250,${0.16 * (1 - dist / 130)})`;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
-          }
-        }
-        if (mouse.active) {
-          const dx = a.x - mouse.x,
-            dy = a.y - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) {
-            ctx.strokeStyle = `rgba(232,121,249,${0.35 * (1 - dist / 150)})`;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(mouse.x, mouse.y);
-            ctx.stroke();
-          }
-        }
-      }
-      for (const p of particles) {
-        ctx.fillStyle = "rgba(196,181,253,0.55)";
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 1.6, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      raf = requestAnimationFrame(tick);
-    }
-
-    resize();
-    tick();
-    window.addEventListener("resize", resize);
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseleave", onLeave);
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseleave", onLeave);
-    };
-  }, []);
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />;
-}
 
 /* ---------------- Parallax Background Orbs ---------------- */
 function GradientOrbs({ scrollYProgress }) {
@@ -529,12 +379,12 @@ function Hero3D() {
     scene.add(group);
 
     const icoGeo = new THREE.IcosahedronGeometry(1.9, 1);
-    const icoMat = new THREE.MeshBasicMaterial({ color: 0xa855f7, wireframe: true, transparent: true, opacity: 0.55 });
+    const icoMat = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.5 });
     const ico = new THREE.Mesh(icoGeo, icoMat);
     group.add(ico);
 
     const innerGeo = new THREE.IcosahedronGeometry(1.15, 0);
-    const innerMat = new THREE.MeshBasicMaterial({ color: 0xf0abfc, wireframe: true, transparent: true, opacity: 0.4 });
+    const innerMat = new THREE.MeshBasicMaterial({ color: 0xc4b5fd, wireframe: true, transparent: true, opacity: 0.35 });
     const inner = new THREE.Mesh(innerGeo, innerMat);
     group.add(inner);
 
@@ -550,7 +400,7 @@ function Hero3D() {
       positions[i * 3 + 2] = r * Math.cos(phi);
     }
     starGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    const starMat = new THREE.PointsMaterial({ color: 0xc4b5fd, size: 0.035, transparent: true, opacity: 0.8 });
+    const starMat = new THREE.PointsMaterial({ color: 0xe0e7ff, size: 0.035, transparent: true, opacity: 0.7 });
     const stars = new THREE.Points(starGeo, starMat);
     group.add(stars);
 
@@ -563,7 +413,6 @@ function Hero3D() {
     }
     window.addEventListener("mousemove", onMove);
 
-    // ScrollTrigger scrub for scale & rotation
     let scrollTriggerInstance = null;
     try {
       scrollTriggerInstance = ScrollTrigger.create({
@@ -578,7 +427,7 @@ function Hero3D() {
         },
       });
     } catch (e) {
-      // safe fallback
+      // fallback
     }
 
     let raf;
@@ -589,7 +438,6 @@ function Hero3D() {
       inner.rotation.x += 0.002;
       stars.rotation.y += 0.0008;
 
-      // Enhanced smooth mouse response
       mouseX += (targetMouseX - mouseX) * 0.06;
       mouseY += (targetMouseY - mouseY) * 0.06;
 
@@ -631,7 +479,7 @@ function Hero3D() {
   return <div ref={mountRef} className="w-full h-full" />;
 }
 
-/* ---------------- TiltCard with 3D Spring & Cursor Glow ---------------- */
+/* ---------------- TiltCard with 3D Spring & Subtle Glow ---------------- */
 function TiltCard({ children, className = "" }) {
   const ref = useRef(null);
   const [style, setStyle] = useState({
@@ -645,8 +493,8 @@ function TiltCard({ children, className = "" }) {
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
     setStyle({
-      transform: `perspective(900px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) translateZ(16px) scale(1.012)`,
-      boxShadow: `${-x * 25}px ${-y * 25 + 14}px 35px -8px rgba(124,58,237,0.35)`,
+      transform: `perspective(900px) rotateY(${x * 10}deg) rotateX(${-y * 10}deg) translateZ(12px) scale(1.01)`,
+      boxShadow: `${-x * 20}px ${-y * 20 + 12}px 30px -8px rgba(139,92,246,0.22)`,
       "--glow-x": `${(x + 0.5) * 100}%`,
       "--glow-y": `${(y + 0.5) * 100}%`,
     });
@@ -654,7 +502,7 @@ function TiltCard({ children, className = "" }) {
   function handleLeave() {
     setStyle({
       transform: "perspective(900px) rotateY(0deg) rotateX(0deg) translateZ(0px) scale(1)",
-      boxShadow: "0px 10px 30px -18px rgba(124,58,237,0.18)",
+      boxShadow: "0px 8px 24px -12px rgba(139,92,246,0.12)",
     });
   }
 
@@ -674,219 +522,10 @@ function TiltCard({ children, className = "" }) {
       <div
         className="absolute inset-0 rounded-2xl opacity-0 hover:opacity-100 transition-opacity pointer-events-none"
         style={{
-          background: `radial-gradient(220px circle at var(--glow-x, 50%) var(--glow-y, 50%), rgba(168,85,247,0.2), transparent 70%)`,
+          background: `radial-gradient(220px circle at var(--glow-x, 50%) var(--glow-y, 50%), rgba(139,92,246,0.15), transparent 70%)`,
         }}
       />
-      <div style={{ transform: "translateZ(14px)", transformStyle: "preserve-3d" }}>{children}</div>
-    </div>
-  );
-}
-
-/* ---------------- Viewport-Triggered Bar Chart ---------------- */
-function BarChartWidget({ data }) {
-  const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { once: true, margin: "-40px" });
-  const [hoveredIdx, setHoveredIdx] = useState(null);
-
-  return (
-    <div ref={containerRef} className="w-full flex flex-col justify-between pt-3">
-      {/* Visual Chart Track */}
-      <div className="flex items-end justify-between gap-3 h-32 px-1 relative">
-        {/* Grid Guidelines */}
-        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20">
-          <div className="border-b border-violet-400 border-dashed w-full" />
-          <div className="border-b border-violet-400 border-dashed w-full" />
-          <div className="border-b border-violet-400 border-dashed w-full" />
-        </div>
-
-        {data.map((d, i) => (
-          <div
-            key={d.label}
-            className="flex-1 h-full flex flex-col items-center justify-end relative group cursor-pointer"
-            onMouseEnter={() => setHoveredIdx(i)}
-            onMouseLeave={() => setHoveredIdx(null)}
-          >
-            {/* Tooltip on hover */}
-            {hoveredIdx === i && (
-              <div className="absolute -top-7 bg-violet-950/90 border border-fuchsia-400 text-fuchsia-200 text-[10px] font-bold px-2 py-0.5 rounded shadow-lg backdrop-blur-md z-20 whitespace-nowrap animate-in fade-in zoom-in-95">
-                {d.label}: {d.value}%
-              </div>
-            )}
-
-            {/* Score label above bar */}
-            <span
-              className={`text-[10px] font-mono font-bold mb-1.5 transition-all duration-300 ${
-                hoveredIdx === i ? "text-fuchsia-300 scale-110" : "text-violet-300/80"
-              }`}
-            >
-              {isInView ? <Counter value={`${d.value}%`} duration={1.2 + i * 0.1} /> : "0%"}
-            </span>
-
-            {/* Bar Outer Track */}
-            <div className="w-full bg-white/[0.06] rounded-t-lg h-24 relative flex items-end overflow-hidden p-0.5 border border-white/5 group-hover:border-fuchsia-500/40 transition-colors">
-              {/* Inner Gradient Bar */}
-              <div
-                className={`w-full rounded-t-md bg-gradient-to-t ${d.color || "from-violet-600 via-fuchsia-500 to-pink-400"} transition-all duration-1000 ease-out relative`}
-                style={{
-                  height: isInView ? `${d.value}%` : "0%",
-                  transitionDelay: `${i * 120}ms`,
-                  boxShadow: hoveredIdx === i ? "0 0 20px rgba(232,121,249,0.8)" : "0 0 10px rgba(217,70,239,0.35)",
-                }}
-              >
-                {/* Glowing Top Cap */}
-                <div className="absolute top-0 inset-x-0 h-1 bg-white/80 rounded-t-md shadow-sm" />
-              </div>
-            </div>
-
-            {/* Tech Name Label */}
-            <div className="mt-2.5 flex items-center gap-1 text-center">
-              <span className="text-xs">{d.icon}</span>
-              <span className="text-[11px] font-semibold text-violet-100 group-hover:text-fuchsia-300 transition-colors">
-                {d.label}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ---------------- Viewport-Triggered Line Chart ---------------- */
-function LineChartWidget({ milestones }) {
-  const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { once: true, margin: "-40px" });
-  const [activeNode, setActiveNode] = useState(null);
-
-  const w = 540,
-    h = 130,
-    pad = 28;
-  const count = milestones.length;
-
-  const points = milestones.map((m, i) => {
-    const x = pad + (i / (count - 1)) * (w - pad * 2);
-    const y = h - pad - (m.level / 100) * (h - pad * 2);
-    return { x, y, ...m };
-  });
-
-  const linePath = points
-    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
-    .join(" ");
-
-  const areaPath = `${linePath} L ${points[count - 1].x} ${h - 8} L ${points[0].x} ${h - 8} Z`;
-
-  return (
-    <div ref={containerRef} className="w-full pt-2">
-      <div className="relative">
-        <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-32 overflow-visible">
-          <defs>
-            <linearGradient id="velocityGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#d946ef" stopOpacity="0.45" />
-              <stop offset="60%" stopColor="#8b5cf6" stopOpacity="0.15" />
-              <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
-            </linearGradient>
-            <linearGradient id="strokeGlow" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#818cf8" />
-              <stop offset="50%" stopColor="#d946ef" />
-              <stop offset="100%" stopColor="#38bdf8" />
-            </linearGradient>
-          </defs>
-
-          {/* Area Fill */}
-          <path
-            d={areaPath}
-            fill="url(#velocityGradient)"
-            style={{
-              opacity: isInView ? 1 : 0,
-              transition: "opacity 1.2s ease-out 0.4s",
-            }}
-          />
-
-          {/* Path Line */}
-          <path
-            d={linePath}
-            fill="none"
-            stroke="url(#strokeGlow)"
-            strokeWidth="3.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{
-              filter: "drop-shadow(0 0 10px rgba(217,70,239,0.7))",
-              strokeDasharray: 900,
-              strokeDashoffset: isInView ? 0 : 900,
-              transition: "stroke-dashoffset 1.6s cubic-bezier(0.16, 1, 0.3, 1)",
-            }}
-          />
-
-          {/* Interactive Milestone Nodes (Popping in sequentially) */}
-          {points.map((p, i) => (
-            <g
-              key={i}
-              className="cursor-pointer group"
-              onMouseEnter={() => setActiveNode(p)}
-              onMouseLeave={() => setActiveNode(null)}
-              style={{
-                opacity: isInView ? 1 : 0,
-                transform: isInView ? "scale(1)" : "scale(0)",
-                transformOrigin: `${p.x}px ${p.y}px`,
-                transition: `all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) ${0.6 + i * 0.18}s`,
-              }}
-            >
-              {/* Pulsing ring for latest point */}
-              {i === count - 1 && isInView && (
-                <circle cx={p.x} cy={p.y} r="9" fill="none" stroke="#38bdf8" strokeWidth="1.5">
-                  <animate attributeName="r" values="6;13;6" dur="2s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.8;0;0.8" dur="2s" repeatCount="indefinite" />
-                </circle>
-              )}
-
-              {/* Node Dot */}
-              <circle
-                cx={p.x}
-                cy={p.y}
-                r={activeNode?.company === p.company ? "6.5" : "4.5"}
-                fill="#ffffff"
-                stroke="#d946ef"
-                strokeWidth="2.5"
-                style={{
-                  transition: "all 0.2s ease-out",
-                  filter: "drop-shadow(0 0 6px rgba(217,70,239,0.9))",
-                }}
-              />
-            </g>
-          ))}
-        </svg>
-
-        {/* Milestone Node Details Overlay */}
-        {activeNode && (
-          <div className="absolute top-0 right-4 bg-black/80 border border-fuchsia-500/50 backdrop-blur-md rounded-xl px-3 py-1.5 shadow-xl flex items-center gap-2 animate-in fade-in">
-            <span className="w-2 h-2 rounded-full bg-fuchsia-400" />
-            <span className="text-xs font-bold text-white">{activeNode.company}</span>
-            <span className="text-[11px] text-violet-300 font-medium">({activeNode.focus})</span>
-            <span className="text-[10px] text-fuchsia-300 font-mono bg-fuchsia-500/20 px-1.5 py-0.5 rounded">
-              {activeNode.date}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* High-Contrast Readable Labels */}
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-3 pt-2 border-t border-white/5">
-        {milestones.map((m, i) => (
-          <div
-            key={i}
-            className={`flex flex-col items-center text-center p-1.5 rounded-lg border transition-all ${
-              activeNode?.company === m.company
-                ? "bg-fuchsia-500/15 border-fuchsia-500/40 shadow-sm"
-                : "bg-white/[0.02] border-white/5 hover:border-violet-500/30"
-            }`}
-          >
-            <p className="text-[11px] font-bold text-violet-100 leading-tight">{m.company}</p>
-            <p className="text-[9px] text-fuchsia-300/90 font-medium truncate w-full mt-0.5">{m.focus}</p>
-            <p className="text-[8px] text-violet-400 font-mono mt-0.5">{m.date}</p>
-          </div>
-        ))}
-      </div>
+      <div style={{ transform: "translateZ(10px)", transformStyle: "preserve-3d" }}>{children}</div>
     </div>
   );
 }
@@ -899,17 +538,16 @@ function SkillBar({ name, pct }) {
   return (
     <div ref={ref}>
       <div className="flex justify-between text-sm mb-2">
-        <span className="text-violet-100 font-medium">{name}</span>
+        <span className="text-zinc-200 font-medium text-xs sm:text-sm">{name}</span>
         <span className="text-violet-400 font-mono text-xs font-semibold">
-          {isInView ? <Counter value={`${pct}%`} duration={1.5} /> : "0%"}
+          {isInView ? <Counter value={`${pct}%`} duration={1.4} /> : "0%"}
         </span>
       </div>
-      <div className="h-2.5 rounded-full bg-white/5 overflow-hidden p-0.5 border border-white/5 relative">
+      <div className="h-2 rounded-full bg-white/5 overflow-hidden p-0.5 border border-white/5 relative">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-fuchsia-500 via-violet-500 to-indigo-500 transition-all duration-1000 ease-out relative overflow-hidden"
+          className="h-full rounded-full bg-gradient-to-r from-violet-600 via-fuchsia-500 to-indigo-500 transition-all duration-1000 ease-out relative overflow-hidden"
           style={{ width: isInView ? `${pct}%` : "0%" }}
         >
-          {/* Shimmer sweep effect */}
           {isInView && (
             <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer pointer-events-none" />
           )}
@@ -919,26 +557,25 @@ function SkillBar({ name, pct }) {
   );
 }
 
-/* ---------------- Section Label with Mask/Clip-Path Animation ---------------- */
+/* ---------------- Section Label ---------------- */
 function SectionLabel({ eyebrow, title, subtitle }) {
   return (
     <div className="mb-12 text-center">
       {/* Eyebrow */}
       <Reveal direction="down" delay={0.05}>
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-semibold tracking-wide uppercase mb-4 shadow-sm">
-          <Sparkles size={13} className="text-fuchsia-400" /> {eyebrow}
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/25 bg-violet-500/10 text-violet-300 text-xs font-medium tracking-wide uppercase mb-3 shadow-sm">
+          <Sparkles size={12} className="text-violet-400" /> {eyebrow}
         </div>
       </Reveal>
 
-      {/* Mask-revealed Title */}
+      {/* Title */}
       <div className="overflow-hidden py-1">
         <motion.h2
           initial={{ y: "100%", opacity: 0 }}
           whileInView={{ y: "0%", opacity: 1 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.7, ease: [0.21, 0.47, 0.32, 0.98], delay: 0.1 }}
-          className="text-3xl md:text-5xl font-extrabold text-white tracking-tight"
-          style={{ fontFamily: "Space Grotesk, sans-serif" }}
+          className="text-3xl md:text-5xl font-extrabold text-white tracking-tight font-heading"
         >
           {title}
         </motion.h2>
@@ -946,8 +583,8 @@ function SectionLabel({ eyebrow, title, subtitle }) {
 
       {/* Subtitle */}
       {subtitle && (
-        <Reveal delay={0.2} y={20}>
-          <p className="mt-3 text-violet-200/70 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+        <Reveal delay={0.2} y={15}>
+          <p className="mt-3 text-zinc-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
             {subtitle}
           </p>
         </Reveal>
@@ -961,10 +598,7 @@ function HeroHeadline() {
   const words = ["Turning", "Raw", "Data", "Into"];
 
   return (
-    <h1
-      className="text-4xl sm:text-5xl lg:text-[62px] font-extrabold leading-[1.1] tracking-tight text-white"
-      style={{ fontFamily: "Space Grotesk, sans-serif" }}
-    >
+    <h1 className="text-4xl sm:text-5xl lg:text-[58px] font-extrabold leading-[1.12] tracking-[-0.03em] text-white font-heading">
       <div className="flex flex-wrap gap-x-3.5 gap-y-1">
         {words.map((word, idx) => (
           <span key={idx} className="overflow-hidden inline-block py-0.5">
@@ -995,11 +629,8 @@ function HeroHeadline() {
             delay: 0.38,
           }}
         >
-          <span className="bg-gradient-to-r from-fuchsia-400 via-pink-300 to-violet-400 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(217,70,239,0.35)]">
-            Actionable Business
-          </span>{" "}
-          <span className="bg-gradient-to-r from-violet-300 via-indigo-300 to-cyan-300 bg-clip-text text-transparent">
-            Intelligence
+          <span className="bg-gradient-to-r from-violet-200 via-fuchsia-200 to-indigo-200 bg-clip-text text-transparent">
+            Actionable Business Intelligence
           </span>
         </motion.span>
       </span>
@@ -1007,7 +638,7 @@ function HeroHeadline() {
   );
 }
 
-/* ---------------- Hero Rotating / Typewriter Line ---------------- */
+/* ---------------- Hero Rotating Status Line ---------------- */
 function HeroRoles() {
   const roles = [
     "Data Analyst",
@@ -1027,7 +658,7 @@ function HeroRoles() {
       if (displayedText.length < fullText.length) {
         timer = setTimeout(() => {
           setDisplayedText(fullText.slice(0, displayedText.length + 1));
-        }, 60);
+        }, 55);
       } else {
         timer = setTimeout(() => {
           setIsDeleting(true);
@@ -1037,7 +668,7 @@ function HeroRoles() {
       if (displayedText.length > 0) {
         timer = setTimeout(() => {
           setDisplayedText(fullText.slice(0, displayedText.length - 1));
-        }, 30);
+        }, 25);
       } else {
         setIsDeleting(false);
         setCurrentIdx((prev) => (prev + 1) % roles.length);
@@ -1048,15 +679,15 @@ function HeroRoles() {
   }, [displayedText, isDeleting, currentIdx]);
 
   return (
-    <div className="inline-flex items-center gap-2 font-mono text-sm sm:text-base font-semibold text-violet-300 mt-3.5 mb-1 bg-violet-950/40 px-3.5 py-1.5 rounded-xl border border-violet-500/25">
-      <Sparkles size={14} className="text-fuchsia-400 animate-spin" style={{ animationDuration: "6s" }} />
+    <div className="inline-flex items-center gap-2 font-mono text-xs sm:text-sm text-zinc-300 mt-4 mb-2 bg-white/[0.04] px-3.5 py-1.5 rounded-full border border-white/10 shadow-sm">
+      <span className="w-1.5 h-1.5 rounded-full bg-violet-400" />
       <span>{displayedText}</span>
-      <span className="w-2 h-4 bg-fuchsia-400 animate-pulse" />
+      <span className="w-1.5 h-3.5 bg-violet-400 animate-pulse" />
     </div>
   );
 }
 
-/* ---------------- Featured Projects Horizontal Pin-and-Scroll Section ---------------- */
+/* ---------------- Featured Projects Horizontal Pin-and-Scroll ---------------- */
 function FeaturedProjectsHorizontal() {
   const containerRef = useRef(null);
   const trackRef = useRef(null);
@@ -1102,30 +733,29 @@ function FeaturedProjectsHorizontal() {
               key={proj.title}
               className="w-[480px] shrink-0 group transition-transform duration-300 hover:-translate-y-2"
             >
-              <TiltCard className="h-full rounded-3xl border border-white/10 bg-white/[0.03] p-7 backdrop-blur-md group-hover:border-fuchsia-500/50 transition-all flex flex-col justify-between shadow-xl">
+              <TiltCard className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-7 backdrop-blur-md group-hover:border-violet-500/40 transition-all flex flex-col justify-between shadow-xl">
                 <div>
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div>
-                      <span className="text-[10px] font-mono text-fuchsia-300 font-bold bg-fuchsia-500/10 px-2 py-0.5 rounded border border-fuchsia-500/20">
+                      <span className="text-[10px] font-mono text-violet-300 font-semibold bg-violet-500/10 px-2 py-0.5 rounded border border-violet-500/20">
                         Project #{idx + 1}
                       </span>
                       <h3
-                        className="text-xl font-bold text-white mt-1.5"
-                        style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                        className="text-lg font-bold text-white mt-1.5 font-heading"
                       >
                         {proj.title}
                       </h3>
                     </div>
-                    <div className="flex gap-2.5 shrink-0">
+                    <div className="flex gap-2 shrink-0">
                       {proj.demo && (
                         <a
                           href={proj.demo}
                           target="_blank"
                           rel="noreferrer"
-                          className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-300 hover:text-fuchsia-300 hover:bg-violet-500/20 transition-all"
+                          className="p-2 rounded-xl bg-white/[0.04] border border-white/10 text-zinc-300 hover:text-white hover:border-violet-400 transition-all"
                           title="Live Demo"
                         >
-                          <ExternalLink size={15} />
+                          <ExternalLink size={14} />
                         </a>
                       )}
                       {proj.repo && (
@@ -1133,23 +763,23 @@ function FeaturedProjectsHorizontal() {
                           href={proj.repo}
                           target="_blank"
                           rel="noreferrer"
-                          className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-300 hover:text-fuchsia-300 hover:bg-violet-500/20 transition-all"
+                          className="p-2 rounded-xl bg-white/[0.04] border border-white/10 text-zinc-300 hover:text-white hover:border-violet-400 transition-all"
                           title="Source Code"
                         >
-                          <Github size={15} />
+                          <Github size={14} />
                         </a>
                       )}
                     </div>
                   </div>
 
-                  <p className="text-fuchsia-400 text-xs font-semibold mb-3">{proj.tagline}</p>
-                  <p className="text-violet-100/75 text-sm leading-relaxed mb-4">{proj.description}</p>
+                  <p className="text-violet-300 text-xs font-medium mb-3">{proj.tagline}</p>
+                  <p className="text-zinc-300 text-sm leading-relaxed mb-4">{proj.description}</p>
 
                   {proj.highlights && (
                     <div className="mb-4 space-y-1.5">
                       {proj.highlights.map((hl, i) => (
-                        <div key={i} className="flex items-center gap-2 text-xs text-violet-300/80">
-                          <span className="w-1.5 h-1.5 rounded-full bg-fuchsia-400" />
+                        <div key={i} className="flex items-center gap-2 text-xs text-zinc-400">
+                          <span className="w-1.5 h-1.5 rounded-full bg-violet-400" />
                           <span>{hl}</span>
                         </div>
                       ))}
@@ -1161,7 +791,7 @@ function FeaturedProjectsHorizontal() {
                   {proj.tech.map((t) => (
                     <span
                       key={t}
-                      className="text-[11px] px-2.5 py-1 rounded-lg bg-violet-500/10 border border-violet-500/20 text-violet-200 font-medium group-hover:border-fuchsia-500/30 transition-all"
+                      className="text-[11px] px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-zinc-300 font-medium"
                     >
                       {t}
                     </span>
@@ -1177,25 +807,24 @@ function FeaturedProjectsHorizontal() {
       <div className="lg:hidden grid sm:grid-cols-2 gap-6">
         {FEATURED_PROJECTS.map((proj) => (
           <Reveal key={proj.title}>
-            <TiltCard className="h-full rounded-3xl border border-white/10 bg-white/[0.03] p-7 backdrop-blur-md hover:border-fuchsia-500/40 transition-all flex flex-col justify-between">
+            <TiltCard className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-7 backdrop-blur-md hover:border-violet-500/40 transition-all flex flex-col justify-between">
               <div>
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <h3
-                    className="text-xl font-bold text-white"
-                    style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                    className="text-lg font-bold text-white font-heading"
                   >
                     {proj.title}
                   </h3>
-                  <div className="flex gap-2.5 shrink-0">
+                  <div className="flex gap-2 shrink-0">
                     {proj.demo && (
                       <a
                         href={proj.demo}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-300 hover:text-fuchsia-300 hover:bg-violet-500/20 transition-all"
+                        className="p-2 rounded-xl bg-white/[0.04] border border-white/10 text-zinc-300 hover:text-white hover:border-violet-400 transition-all"
                         title="Live Demo"
                       >
-                        <ExternalLink size={15} />
+                        <ExternalLink size={14} />
                       </a>
                     )}
                     {proj.repo && (
@@ -1203,23 +832,23 @@ function FeaturedProjectsHorizontal() {
                         href={proj.repo}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-300 hover:text-fuchsia-300 hover:bg-violet-500/20 transition-all"
+                        className="p-2 rounded-xl bg-white/[0.04] border border-white/10 text-zinc-300 hover:text-white hover:border-violet-400 transition-all"
                         title="Source Code"
                       >
-                        <Github size={15} />
+                        <Github size={14} />
                       </a>
                     )}
                   </div>
                 </div>
 
-                <p className="text-fuchsia-400 text-xs font-semibold mb-3">{proj.tagline}</p>
-                <p className="text-violet-100/75 text-sm leading-relaxed mb-4">{proj.description}</p>
+                <p className="text-violet-300 text-xs font-medium mb-3">{proj.tagline}</p>
+                <p className="text-zinc-300 text-sm leading-relaxed mb-4">{proj.description}</p>
 
                 {proj.highlights && (
                   <div className="mb-4 space-y-1">
                     {proj.highlights.map((hl, i) => (
-                      <div key={i} className="flex items-center gap-2 text-xs text-violet-300/80">
-                        <span className="w-1.5 h-1.5 rounded-full bg-fuchsia-400" />
+                      <div key={i} className="flex items-center gap-2 text-xs text-zinc-400">
+                        <span className="w-1.5 h-1.5 rounded-full bg-violet-400" />
                         <span>{hl}</span>
                       </div>
                     ))}
@@ -1231,7 +860,7 @@ function FeaturedProjectsHorizontal() {
                 {proj.tech.map((t) => (
                   <span
                     key={t}
-                    className="text-[11px] px-2.5 py-1 rounded-lg bg-violet-500/10 border border-violet-500/20 text-violet-200 font-medium"
+                    className="text-[11px] px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-zinc-300 font-medium"
                   >
                     {t}
                   </span>
@@ -1241,6 +870,84 @@ function FeaturedProjectsHorizontal() {
           </Reveal>
         ))}
       </div>
+    </div>
+  );
+}
+
+/* ---------------- Redesigned Uniform Certifications Grid with Category Filter ---------------- */
+function CertificationsShowcase() {
+  const [activeCategory, setActiveCategory] = useState("All Credentials");
+
+  const filteredCerts =
+    activeCategory === "All Credentials"
+      ? ALL_CERTIFICATIONS
+      : ALL_CERTIFICATIONS.filter((c) => c.category === activeCategory);
+
+  return (
+    <div className="w-full">
+      {/* Category Filter Tabs */}
+      <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+        {CERT_CATEGORIES.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={`text-xs px-4 py-2 rounded-full border transition-all duration-200 font-medium ${
+              activeCategory === cat
+                ? "bg-violet-600 border-violet-500 text-white shadow-md shadow-violet-600/30"
+                : "bg-white/[0.03] border-white/10 text-zinc-300 hover:border-violet-500/30 hover:text-white"
+            }`}
+          >
+            {cat} {cat === "All Credentials" ? `(${ALL_CERTIFICATIONS.length})` : ""}
+          </button>
+        ))}
+      </div>
+
+      {/* Balanced, Zero-Gap Credential Grid */}
+      <motion.div
+        layout
+        className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"
+      >
+        <AnimatePresence>
+          {filteredCerts.map((cert) => {
+            const Icon = cert.icon;
+            return (
+              <motion.div
+                key={cert.name}
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="h-full"
+              >
+                <TiltCard className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-md hover:border-violet-500/40 transition-all flex flex-col justify-between shadow-sm">
+                  <div>
+                    <div className="flex items-center justify-between gap-3 mb-3">
+                      <div className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-300">
+                        <Icon size={16} />
+                      </div>
+                      <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/10 text-zinc-400">
+                        {cert.issuer}
+                      </span>
+                    </div>
+
+                    <h4 className="text-zinc-100 font-bold text-sm leading-snug font-heading mt-1">
+                      {cert.name}
+                    </h4>
+                  </div>
+
+                  <div className="pt-3.5 mt-3.5 border-t border-white/5 flex items-center justify-between">
+                    <span className="text-[11px] text-zinc-400">{cert.category}</span>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-violet-300">
+                      <CheckCircle2 size={12} className="text-violet-400" /> Verified
+                    </span>
+                  </div>
+                </TiltCard>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 }
@@ -1285,7 +992,7 @@ export default function App() {
     }
   }, []);
 
-  // Track Navbar Scroll Direction (Hide on scroll down, show on scroll up)
+  // Track Navbar Scroll Direction
   useEffect(() => {
     let lastY = window.scrollY;
 
@@ -1295,9 +1002,9 @@ export default function App() {
 
       if (currentY > 140) {
         if (currentY > lastY) {
-          setNavVisible(false); // scrolling down
+          setNavVisible(false);
         } else {
-          setNavVisible(true); // scrolling up
+          setNavVisible(true);
         }
       } else {
         setNavVisible(true);
@@ -1309,7 +1016,7 @@ export default function App() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Track Active Section for Navbar Sliding Pill
+  // Track Active Section for Navbar
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -1330,7 +1037,6 @@ export default function App() {
     return () => observer.disconnect();
   }, []);
 
-  // Smooth scroll handler using Lenis
   const scrollTo = (id) => {
     setMenuOpen(false);
     const element = document.getElementById(id);
@@ -1345,8 +1051,8 @@ export default function App() {
 
   return (
     <div
-      className="relative min-h-screen bg-[#07040f] text-white overflow-x-hidden selection:bg-fuchsia-500 selection:text-white"
-      style={{ fontFamily: "Inter, ui-sans-serif, system-ui" }}
+      className="relative min-h-screen bg-[#07040f] text-white overflow-x-hidden selection:bg-violet-600 selection:text-white"
+      style={{ fontFamily: "'Inter', sans-serif" }}
     >
       {/* Session Preloader */}
       <Preloader />
@@ -1354,21 +1060,23 @@ export default function App() {
       {/* Interactive Custom Cursor */}
       <Cursor />
 
+      {/* Atmospheric Soft Snowfall Animation */}
+      <Snowfall />
+
       {/* Top Scroll Progress Bar */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-fuchsia-500 via-violet-500 to-indigo-500 z-[999] origin-left"
+        className="fixed top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-500 z-[999] origin-left"
         style={{ scaleX: scrollYProgress }}
       />
 
-      {/* Background Animated Atmosphere & Parallax Orbs */}
+      {/* Background Atmosphere & Parallax Orbs */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <GradientOrbs scrollYProgress={scrollYProgress} />
-        <ParticleField />
         <div
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(60% 45% at 50% 0%, rgba(124,58,237,0.28), transparent 70%)",
+              "radial-gradient(60% 45% at 50% 0%, rgba(124,58,237,0.22), transparent 70%)",
           }}
         />
       </div>
@@ -1379,7 +1087,7 @@ export default function App() {
           navVisible ? "translate-y-0" : "-translate-y-full"
         } ${
           scrolled
-            ? "bg-[#07040f]/85 backdrop-blur-xl border-b border-white/10 shadow-2xl py-2"
+            ? "bg-[#07040f]/90 backdrop-blur-xl border-b border-white/10 shadow-xl py-2"
             : "py-4"
         }`}
       >
@@ -1389,14 +1097,13 @@ export default function App() {
               if (lenisRef.current) lenisRef.current.scrollTo(0);
               else window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            className="flex items-center gap-2.5 font-bold text-lg cursor-pointer group"
-            style={{ fontFamily: "Space Grotesk, sans-serif" }}
+            className="flex items-center gap-2.5 font-bold text-lg cursor-pointer group font-heading"
           >
-            <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-fuchsia-500 via-purple-600 to-indigo-600 flex items-center justify-center text-xs font-black shadow-lg shadow-purple-500/30 group-hover:scale-105 transition-transform">
+            <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-xs font-black shadow-md shadow-violet-600/30 group-hover:scale-105 transition-transform">
               PS
             </span>
-            <span className="tracking-wide">
-              Poorani <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-violet-400">S</span>
+            <span className="tracking-tight text-white">
+              Poorani <span className="text-violet-400">S</span>
             </span>
           </div>
 
@@ -1408,13 +1115,13 @@ export default function App() {
                   key={n.id}
                   onClick={() => scrollTo(n.id)}
                   className={`text-xs font-medium px-3.5 py-1.5 rounded-full transition-colors relative ${
-                    isActive ? "text-white font-semibold" : "text-violet-100/80 hover:text-white"
+                    isActive ? "text-white font-semibold" : "text-zinc-400 hover:text-white"
                   }`}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="activeNavPill"
-                      className="absolute inset-0 rounded-full bg-gradient-to-r from-fuchsia-500/30 to-violet-500/30 border border-fuchsia-400/40 shadow-sm"
+                      className="absolute inset-0 rounded-full bg-violet-500/25 border border-violet-400/40 shadow-sm"
                       transition={{ type: "spring", stiffness: 350, damping: 30 }}
                     />
                   )}
@@ -1429,7 +1136,7 @@ export default function App() {
               <a
                 href="/resume.pdf"
                 download="Poorani_S_Resume.pdf"
-                className="flex items-center gap-2 border border-violet-500/40 bg-violet-500/10 text-violet-200 text-xs font-semibold px-4 py-2 rounded-full hover:bg-violet-500/20 hover:border-violet-400 transition-all"
+                className="flex items-center gap-2 border border-white/15 bg-white/[0.04] text-zinc-200 text-xs font-medium px-4 py-2 rounded-full hover:bg-white/[0.08] hover:border-violet-400 transition-all"
               >
                 <Download size={13} /> Resume
               </a>
@@ -1437,7 +1144,7 @@ export default function App() {
             <Magnetic strength={0.3}>
               <button
                 onClick={() => scrollTo("contact")}
-                className="flex items-center gap-1.5 bg-gradient-to-r from-fuchsia-500 via-violet-600 to-indigo-600 text-white text-xs font-semibold px-4 py-2 rounded-full hover:opacity-95 shadow-md shadow-violet-500/25 transition-transform hover:scale-105"
+                className="flex items-center gap-1.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-medium px-4 py-2 rounded-full hover:opacity-95 shadow-md shadow-violet-600/25 transition-transform hover:scale-105"
               >
                 Let's Connect <ArrowRight size={13} />
               </button>
@@ -1445,7 +1152,7 @@ export default function App() {
           </div>
 
           <button
-            className="lg:hidden p-2 rounded-lg bg-white/5 border border-white/10 text-violet-200"
+            className="lg:hidden p-2 rounded-lg bg-white/5 border border-white/10 text-zinc-300"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -1460,7 +1167,7 @@ export default function App() {
                 key={n.id}
                 onClick={() => scrollTo(n.id)}
                 className={`text-left text-sm font-medium py-1.5 transition-colors ${
-                  activeSection === n.id ? "text-fuchsia-400 font-bold" : "text-violet-100/90 hover:text-fuchsia-400"
+                  activeSection === n.id ? "text-violet-400 font-bold" : "text-zinc-300 hover:text-white"
                 }`}
               >
                 {n.label}
@@ -1470,13 +1177,13 @@ export default function App() {
               <a
                 href="/resume.pdf"
                 download="Poorani_S_Resume.pdf"
-                className="flex-1 flex items-center justify-center gap-2 border border-white/15 py-2.5 rounded-full text-xs font-semibold"
+                className="flex-1 flex items-center justify-center gap-2 border border-white/15 py-2.5 rounded-full text-xs font-medium"
               >
                 <Download size={14} /> Resume
               </a>
               <button
                 onClick={() => scrollTo("contact")}
-                className="flex-1 bg-gradient-to-r from-fuchsia-500 to-violet-600 py-2.5 rounded-full text-xs font-semibold text-center"
+                className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 py-2.5 rounded-full text-xs font-medium text-center"
               >
                 Contact
               </button>
@@ -1488,58 +1195,58 @@ export default function App() {
       {/* Hero Section */}
       <section className="relative z-10 max-w-6xl mx-auto px-5 pt-28 md:pt-36 pb-20 grid lg:grid-cols-12 gap-10 items-center">
         <div className="lg:col-span-7">
-          {/* Enhanced Glowing Status Pill */}
+          {/* Status Pill */}
           <Reveal delay={0.05} y={20}>
-            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-fuchsia-500/40 bg-gradient-to-r from-fuchsia-500/15 via-purple-500/15 to-violet-500/15 text-fuchsia-200 text-xs sm:text-sm font-semibold mb-5 shadow-lg shadow-fuchsia-500/20 backdrop-blur-md hover:border-fuchsia-400 transition-all">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-fuchsia-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-fuchsia-400"></span>
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-200 text-xs sm:text-sm font-medium mb-5 shadow-sm backdrop-blur-md">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-400"></span>
               </span>
               <span>Final-Year B.Sc CS (Data Analytics)</span>
-              <span className="text-violet-400 font-bold">•</span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-fuchsia-200 to-indigo-200 font-bold">
+              <span className="text-zinc-500">•</span>
+              <span className="text-zinc-300 font-medium">
                 Open for Data Analyst Roles
               </span>
             </div>
           </Reveal>
 
-          {/* High-Impact Headline with Word-by-Word Stagger Mask */}
+          {/* High-Impact Headline with Word-by-Word Reveal */}
           <HeroHeadline />
 
-          {/* Dynamic Typing Line */}
+          {/* Typewriter Line */}
           <Reveal delay={0.45} y={15}>
             <HeroRoles />
           </Reveal>
 
-          {/* Styled Introduction Card with Tagged Highlights */}
-          <Reveal delay={0.5} y={25}>
-            <div className="mt-5 text-violet-100/90 text-base sm:text-lg leading-relaxed max-w-2xl bg-white/[0.03] border border-white/10 rounded-2xl p-5 sm:p-6 backdrop-blur-md shadow-lg shadow-purple-950/20">
-              <p className="font-normal">
-                Hi, I'm <strong className="text-white font-bold text-lg bg-gradient-to-r from-fuchsia-400 to-violet-300 bg-clip-text text-transparent">Poorani S</strong> — a final-year Data Analytics student with hands-on internship experience across{" "}
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-fuchsia-500/15 border border-fuchsia-500/30 text-fuchsia-200 text-xs sm:text-sm font-semibold">Fintech</span>,{" "}
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-violet-500/15 border border-violet-500/30 text-violet-200 text-xs sm:text-sm font-semibold">Machine Learning</span>,{" "}
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-cyan-500/15 border border-cyan-500/30 text-cyan-200 text-xs sm:text-sm font-semibold">AI Full-Stack</span>, and{" "}
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-200 text-xs sm:text-sm font-semibold">Business Intelligence</span>.
+          {/* Introduction Card */}
+          <Reveal delay={0.5} y={20}>
+            <div className="mt-5 text-zinc-300 text-base sm:text-lg leading-relaxed max-w-2xl bg-white/[0.03] border border-white/10 rounded-2xl p-5 sm:p-6 backdrop-blur-md shadow-lg">
+              <p className="font-normal text-zinc-300">
+                Hi, I'm <strong className="text-white font-semibold text-lg">Poorani S</strong> — a final-year Data Analytics student with hands-on internship experience across{" "}
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-violet-500/10 border border-violet-500/20 text-violet-200 text-xs sm:text-sm font-medium">Fintech</span>,{" "}
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-violet-500/10 border border-violet-500/20 text-violet-200 text-xs sm:text-sm font-medium">Machine Learning</span>,{" "}
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-violet-500/10 border border-violet-500/20 text-violet-200 text-xs sm:text-sm font-medium">AI Full-Stack</span>, and{" "}
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-violet-500/10 border border-violet-500/20 text-violet-200 text-xs sm:text-sm font-medium">Business Intelligence</span>.
               </p>
-              <div className="mt-3.5 pt-3.5 border-t border-white/10 flex flex-wrap items-center gap-2 text-sm text-violet-200">
-                <span className="text-xs text-violet-300/70 font-medium">Core Toolchain:</span>
-                <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Python</span>
-                <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">SQL</span>
-                <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Power BI</span>
-                <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Tableau</span>
-                <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Excel</span>
-                <span className="text-xs text-fuchsia-300 font-medium ml-auto">→ Empowering Growth Decisions</span>
+              <div className="mt-3.5 pt-3.5 border-t border-white/10 flex flex-wrap items-center gap-2 text-sm text-zinc-400">
+                <span className="text-xs text-zinc-500 font-medium">Core Toolchain:</span>
+                <span className="text-xs px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-zinc-200 font-medium font-mono">Python</span>
+                <span className="text-xs px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-zinc-200 font-medium font-mono">SQL</span>
+                <span className="text-xs px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-zinc-200 font-medium font-mono">Power BI</span>
+                <span className="text-xs px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-zinc-200 font-medium font-mono">Tableau</span>
+                <span className="text-xs px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-zinc-200 font-medium font-mono">Excel</span>
+                <span className="text-xs text-violet-300 font-medium ml-auto">→ Empowering Data Decisions</span>
               </div>
             </div>
           </Reveal>
 
-          {/* Action Buttons with Magnetic Effect */}
-          <Reveal delay={0.6} y={25}>
+          {/* Action Buttons */}
+          <Reveal delay={0.6} y={20}>
             <div className="mt-8 flex flex-wrap gap-3.5 items-center">
               <Magnetic strength={0.35}>
                 <button
                   onClick={() => scrollTo("projects")}
-                  className="flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 via-violet-600 to-indigo-600 px-6 py-3.5 rounded-full text-sm font-semibold shadow-lg shadow-violet-500/30 hover:shadow-fuchsia-500/40 hover:scale-105 transition-all"
+                  className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-3.5 rounded-full text-sm font-semibold shadow-lg shadow-violet-600/30 hover:opacity-95 hover:scale-105 transition-all text-white"
                 >
                   Explore Projects <ArrowRight size={15} />
                 </button>
@@ -1548,7 +1255,7 @@ export default function App() {
                 <a
                   href="/resume.pdf"
                   download="Poorani_S_Resume.pdf"
-                  className="flex items-center gap-2 border border-white/20 bg-white/5 backdrop-blur-md px-6 py-3.5 rounded-full text-sm font-semibold hover:bg-white/10 hover:border-violet-400 transition-all"
+                  className="flex items-center gap-2 border border-white/15 bg-white/[0.04] backdrop-blur-md px-6 py-3.5 rounded-full text-sm font-semibold text-zinc-200 hover:bg-white/[0.08] hover:border-violet-400 transition-all"
                 >
                   <Download size={15} /> Download Resume
                 </a>
@@ -1558,7 +1265,7 @@ export default function App() {
                   href="https://github.com/Poorani-S"
                   target="_blank"
                   rel="noreferrer"
-                  className="p-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:text-fuchsia-300 transition-colors inline-block"
+                  className="p-3.5 rounded-full border border-white/15 bg-white/[0.04] text-zinc-300 hover:text-white hover:border-violet-400 transition-colors inline-block"
                   title="GitHub Profile"
                 >
                   <Github size={17} />
@@ -1569,7 +1276,7 @@ export default function App() {
                   href="https://linkedin.com/in/poorani-s-046357340"
                   target="_blank"
                   rel="noreferrer"
-                  className="p-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:text-fuchsia-300 transition-colors inline-block"
+                  className="p-3.5 rounded-full border border-white/15 bg-white/[0.04] text-zinc-300 hover:text-white hover:border-violet-400 transition-colors inline-block"
                   title="LinkedIn Profile"
                 >
                   <Linkedin size={17} />
@@ -1578,32 +1285,29 @@ export default function App() {
             </div>
           </Reveal>
 
-          {/* Key Metric Badges with Smooth Upward Counter */}
+          {/* Metric Badges */}
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3.5">
             {STATS.map((s, idx) => (
-              <Reveal key={s.label} delay={0.7 + idx * 0.08} y={30}>
-                <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-4 text-center hover:border-fuchsia-500/40 transition-colors">
-                  <p
-                    className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-fuchsia-400 to-violet-300 bg-clip-text text-transparent"
-                    style={{ fontFamily: "Space Grotesk, sans-serif" }}
-                  >
+              <Reveal key={s.label} delay={0.7 + idx * 0.08} y={25}>
+                <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-4 text-center hover:border-violet-500/40 transition-colors">
+                  <p className="text-2xl sm:text-3xl font-extrabold text-white font-heading">
                     <Counter value={s.value} duration={1.6} />
                   </p>
-                  <p className="text-white text-xs font-semibold mt-1">{s.label}</p>
-                  <p className="text-violet-300/60 text-[10px] mt-0.5">{s.sub}</p>
+                  <p className="text-zinc-200 text-xs font-semibold mt-1">{s.label}</p>
+                  <p className="text-zinc-500 text-[10px] mt-0.5">{s.sub}</p>
                 </TiltCard>
               </Reveal>
             ))}
           </div>
         </div>
 
-        {/* Interactive 3D Orbit Canvas */}
+        {/* 3D Orbit Canvas */}
         <Reveal delay={0.3} scale={0.92} className="lg:col-span-5 relative h-[360px] md:h-[440px] flex items-center justify-center">
           <Hero3D />
-          <div className="absolute -bottom-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl px-4 py-2 flex items-center gap-3 shadow-lg">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-violet-200">
-              Coimbatore, Tamil Nadu • <span className="text-fuchsia-300 font-mono font-semibold">poorani0307@gmail.com</span>
+          <div className="absolute -bottom-2 bg-black/75 backdrop-blur-md border border-white/10 rounded-2xl px-4 py-2 flex items-center gap-3 shadow-lg">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs text-zinc-300">
+              Coimbatore, India • <span className="text-violet-300 font-mono font-medium">poorani0307@gmail.com</span>
             </span>
           </div>
         </Reveal>
@@ -1623,22 +1327,22 @@ export default function App() {
         <div className="grid lg:grid-cols-12 gap-6">
           {/* Career Objective & Bio */}
           <Reveal className="lg:col-span-7" direction="left">
-            <TiltCard className="h-full rounded-3xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-md flex flex-col justify-between">
+            <TiltCard className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-md flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-3 mb-5">
-                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-fuchsia-500/20 to-violet-500/20 border border-fuchsia-500/30">
-                    <BookOpen size={20} className="text-fuchsia-400" />
+                  <div className="p-2.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400">
+                    <BookOpen size={20} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+                    <h3 className="text-xl font-bold text-white font-heading">
                       Career Objective
                     </h3>
-                    <p className="text-violet-300/60 text-xs">Data Analyst & Machine Learning Developer</p>
+                    <p className="text-zinc-400 text-xs">Data Analyst & Machine Learning Developer</p>
                   </div>
                 </div>
 
-                <div className="space-y-4 text-violet-100/80 text-[15px] leading-relaxed">
-                  <p className="border-l-2 border-fuchsia-500/60 pl-4 py-1 text-violet-100 font-medium italic bg-fuchsia-500/[0.04] rounded-r-lg">
+                <div className="space-y-4 text-zinc-300 text-[15px] leading-relaxed">
+                  <p className="border-l-2 border-violet-500/80 pl-4 py-1 text-zinc-200 font-medium italic bg-violet-500/[0.04] rounded-r-lg">
                     "Final-year B.Sc. Computer Science (Data Analytics) student with hands-on internship
                     experience in data analysis, business intelligence, and machine learning. Proficient in
                     Python, SQL, Power BI, Tableau, and Excel, with a proven ability to turn complex data
@@ -1659,29 +1363,28 @@ export default function App() {
 
               <div className="mt-8 pt-6 border-t border-white/10 grid sm:grid-cols-3 gap-3">
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                  <p className="text-[11px] text-violet-300/60 uppercase tracking-wider font-semibold">Location</p>
+                  <p className="text-[11px] text-zinc-500 uppercase tracking-wider font-semibold">Location</p>
                   <p className="text-white text-xs font-semibold mt-1">Coimbatore, India</p>
                 </div>
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                  <p className="text-[11px] text-violet-300/60 uppercase tracking-wider font-semibold">Specialization</p>
+                  <p className="text-[11px] text-zinc-500 uppercase tracking-wider font-semibold">Specialization</p>
                   <p className="text-white text-xs font-semibold mt-1">CS & Data Analytics</p>
                 </div>
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                  <p className="text-[11px] text-violet-300/60 uppercase tracking-wider font-semibold">Availability</p>
+                  <p className="text-[11px] text-zinc-500 uppercase tracking-wider font-semibold">Availability</p>
                   <p className="text-emerald-400 text-xs font-semibold mt-1">Full-time / Immediate</p>
                 </div>
               </div>
             </TiltCard>
           </Reveal>
 
-          {/* Academic Timeline & Details */}
+          {/* Academic History */}
           <div className="lg:col-span-5 space-y-4">
             <Reveal direction="right">
               <h3
-                className="text-lg font-bold text-white mb-2 flex items-center gap-2"
-                style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                className="text-lg font-bold text-white mb-2 flex items-center gap-2 font-heading"
               >
-                <GraduationCap className="text-fuchsia-400" size={20} /> Academic History
+                <GraduationCap className="text-violet-400" size={20} /> Academic History
               </h3>
             </Reveal>
 
@@ -1690,19 +1393,19 @@ export default function App() {
                 <TiltCard
                   className={`rounded-2xl border p-5 backdrop-blur-md ${
                     edu.current
-                      ? "border-fuchsia-500/40 bg-gradient-to-br from-fuchsia-500/10 to-violet-500/5 shadow-lg shadow-purple-500/10"
+                      ? "border-violet-500/30 bg-violet-500/[0.04] shadow-sm"
                       : "border-white/10 bg-white/[0.02]"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                      <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-300 border border-violet-500/20">
                         {edu.period}
                       </span>
-                      <h4 className="text-white font-bold text-sm mt-2">{edu.degree}</h4>
-                      <p className="text-violet-300/70 text-xs mt-1">{edu.institution}</p>
+                      <h4 className="text-white font-bold text-sm mt-2 font-heading">{edu.degree}</h4>
+                      <p className="text-zinc-400 text-xs mt-1">{edu.institution}</p>
                     </div>
-                    <span className="text-xs font-bold text-fuchsia-300 px-2.5 py-1 rounded-lg bg-fuchsia-500/10 border border-fuchsia-500/20 shrink-0">
+                    <span className="text-xs font-bold text-violet-300 px-2.5 py-1 rounded-lg bg-violet-500/10 border border-violet-500/20 shrink-0">
                       {edu.score}
                     </span>
                   </div>
@@ -1710,14 +1413,14 @@ export default function App() {
               </Reveal>
             ))}
 
-            {/* Language & Communication Card */}
+            {/* Language & Communication */}
             <Reveal delay={0.35} direction="right">
               <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 backdrop-blur-md">
                 <div className="flex items-center gap-3 mb-2">
-                  <LangIcon size={18} className="text-fuchsia-400" />
-                  <h4 className="text-white font-semibold text-sm">Languages & Communication</h4>
+                  <LangIcon size={18} className="text-violet-400" />
+                  <h4 className="text-white font-semibold text-sm font-heading">Languages & Communication</h4>
                 </div>
-                <p className="text-violet-200/70 text-xs">
+                <p className="text-zinc-400 text-xs">
                   English (Fluent / Professional), Tamil (Native / Fluent), Hindi (Working proficiency)
                 </p>
               </TiltCard>
@@ -1736,33 +1439,32 @@ export default function App() {
 
         {/* Top Skill Bars with Shimmer Sweep */}
         <Reveal>
-          <div className="grid md:grid-cols-2 gap-8 mb-16 rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8 backdrop-blur-md shadow-lg">
+          <div className="grid md:grid-cols-2 gap-8 mb-16 rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-8 backdrop-blur-md shadow-lg">
             {TOP_SKILLS.map((s) => (
               <SkillBar key={s.name} {...s} />
             ))}
           </div>
         </Reveal>
 
-        {/* Categorized Technical Skills with Sine Wobble Chips */}
+        {/* Categorized Technical Skills */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {SKILL_CATEGORIES.map((cat, idx) => {
             const Icon = cat.icon;
             return (
-              <Reveal key={cat.title} delay={idx * 0.08} y={30}>
+              <Reveal key={cat.title} delay={idx * 0.08} y={25}>
                 <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md hover:border-violet-500/40 transition-all flex flex-col justify-between h-full">
                   <div>
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-fuchsia-400">
+                      <div className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400">
                         <Icon size={18} />
                       </div>
-                      <h4 className="text-white font-bold text-sm tracking-wide">{cat.title}</h4>
+                      <h4 className="text-white font-bold text-sm tracking-wide font-heading">{cat.title}</h4>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {cat.skills.map((item, itemIdx) => (
+                      {cat.skills.map((item) => (
                         <span
                           key={item}
-                          style={{ animationDelay: `${(idx + itemIdx) * 0.3}s` }}
-                          className="animate-wobble text-xs px-3 py-1 rounded-lg bg-violet-500/10 border border-violet-500/20 text-violet-200 font-medium hover:bg-violet-500/25 hover:text-white hover:scale-105 transition-all cursor-default"
+                          className="text-xs px-3 py-1 rounded-lg bg-white/[0.03] border border-white/10 text-zinc-300 font-medium hover:border-violet-500/40 hover:bg-violet-500/10 hover:text-white transition-all cursor-default"
                         >
                           {item}
                         </span>
@@ -1779,227 +1481,139 @@ export default function App() {
       {/* Reversing Tool Marquee Strip */}
       <Marquee speed={28} reverse={true} />
 
-      {/* LIVE ANALYTICS HUB SECTION */}
+      {/* REDESIGNED ENTERPRISE ANALYTICS & BI TELEMETRY SECTION */}
       <section id="dashboards" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
         <SectionLabel
-          eyebrow="Live Analytics Telemetry"
-          title="Interactive Analytics Hub"
-          subtitle="A production-grade dashboard experience showcasing quantitative telemetry, architecture foundations, and progression velocity."
+          eyebrow="Data & BI Capabilities"
+          title="Enterprise Analytics Showcase"
+          subtitle="Production-grade dashboards, ETL architectures, and predictive machine learning models engineered across real industry datasets."
         />
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* Card 1: Tool Proficiency */}
-          <Reveal y={30} delay={0.05}>
-            <TiltCard className="h-full rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-fuchsia-500/50 transition-all">
+        {/* 4 Executive KPI Metric Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {ANALYTICS_KPIS.map((kpi, idx) => {
+            const Icon = kpi.icon;
+            return (
+              <Reveal key={kpi.label} delay={idx * 0.08} y={20}>
+                <TiltCard className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-md hover:border-violet-500/40 transition-all">
+                  <div className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400 w-fit mb-3">
+                    <Icon size={18} />
+                  </div>
+                  <p className="text-2xl sm:text-3xl font-extrabold text-white font-heading">
+                    <Counter value={kpi.value} duration={1.6} />
+                  </p>
+                  <p className="text-zinc-200 text-xs font-semibold mt-1">{kpi.label}</p>
+                  <p className="text-zinc-500 text-[11px] mt-0.5 leading-snug">{kpi.desc}</p>
+                </TiltCard>
+              </Reveal>
+            );
+          })}
+        </div>
+
+        {/* Main Analytics Architecture Grid */}
+        <div className="grid lg:grid-cols-12 gap-6">
+          {/* Left Panel: Verified Technical Toolchain Depth */}
+          <Reveal className="lg:col-span-5" direction="left">
+            <TiltCard className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between gap-2 mb-1">
+                <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-2.5">
-                    <div className="p-2 rounded-xl bg-fuchsia-500/15 border border-fuchsia-500/30 text-fuchsia-400">
+                    <div className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400">
                       <BarChart3 size={18} />
                     </div>
                     <div>
-                      <h4 className="text-white text-base font-bold">Analytics Tool Strength</h4>
-                      <p className="text-violet-300/60 text-xs">Hands-on project accuracy</p>
+                      <h4 className="text-white text-base font-bold font-heading">Analytics Stack Proficiency</h4>
+                      <p className="text-zinc-400 text-xs">Evaluated across production projects</p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-mono font-bold bg-fuchsia-500/10 text-fuchsia-300 border border-fuchsia-500/20 px-2 py-0.5 rounded-full">
-                    Verified
+                  <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-300 border border-violet-500/20">
+                    Validated
                   </span>
                 </div>
 
-                <div className="mt-4">
-                  <BarChartWidget data={TOOL_PROFICIENCY} />
+                <div className="space-y-4">
+                  {ANALYTICS_TOOLS.map((t) => {
+                    const Icon = t.icon;
+                    return (
+                      <div key={t.label} className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                        <div className="flex items-center justify-between text-xs mb-2">
+                          <div className="flex items-center gap-2">
+                            <Icon size={14} className="text-violet-400" />
+                            <span className="text-zinc-200 font-semibold">{t.label}</span>
+                            <span className="text-zinc-500 text-[10px]">({t.domain})</span>
+                          </div>
+                          <span className="font-mono font-bold text-violet-300">{t.value}%</span>
+                        </div>
+                        <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-violet-600 to-indigo-500"
+                            style={{ width: `${t.value}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              <p className="text-violet-300/60 text-[11px] mt-4 pt-3 border-t border-white/10 text-center">
+              <p className="text-zinc-500 text-xs mt-6 pt-3 border-t border-white/10 text-center">
                 Benchmarked across data transformation, exploratory modeling & DAX queries.
               </p>
             </TiltCard>
           </Reveal>
 
-          {/* Card 2: Core Architecture Stack */}
-          <Reveal y={30} delay={0.15}>
-            <TiltCard className="h-full rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-violet-500/50 transition-all">
+          {/* Right Panel: End-to-End Analytics Pipeline Pillars */}
+          <Reveal className="lg:col-span-7" direction="right">
+            <TiltCard className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between gap-2 mb-1">
+                <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-2.5">
-                    <div className="p-2 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-400">
-                      <Boxes size={18} />
+                    <div className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400">
+                      <Layers size={18} />
                     </div>
                     <div>
-                      <h4 className="text-white text-base font-bold">Core Architecture Stack</h4>
-                      <p className="text-violet-300/60 text-xs">Technologies powering pipelines</p>
+                      <h4 className="text-white text-base font-bold font-heading">Core Pipeline Architecture</h4>
+                      <p className="text-zinc-400 text-xs">From raw ingestion to executive cockpits</p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-mono font-bold bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-full">
-                    6 Pillars
+                  <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-white/[0.04] text-zinc-400 border border-white/10">
+                    4 Pillars
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2.5 mt-5">
-                  {TECH_PILLARS.map(({ icon: Icon, label, sub, color, border, bg }) => (
-                    <div
-                      key={label}
-                      className={`flex flex-col rounded-xl border ${border} ${bg} p-2.5 hover:scale-[1.03] transition-all cursor-pointer`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Icon size={16} className={color} />
-                        <span className="text-xs font-bold text-white leading-tight">{label}</span>
-                      </div>
-                      <span className="text-[10px] text-violet-300/70 mt-1 leading-tight">{sub}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <p className="text-violet-300/60 text-[11px] mt-4 pt-3 border-t border-white/10 text-center">
-                End-to-end telemetry from raw ingestion to model deployment.
-              </p>
-            </TiltCard>
-          </Reveal>
-
-          {/* Card 3: Quantitative Impact */}
-          <Reveal y={30} delay={0.25}>
-            <TiltCard className="h-full rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-cyan-500/50 transition-all">
-              <div>
-                <div className="flex items-center justify-between gap-2 mb-1">
-                  <div className="flex items-center gap-2.5">
-                    <div className="p-2 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400">
-                      <Activity size={18} />
-                    </div>
-                    <div>
-                      <h4 className="text-white text-base font-bold">Quantitative Impact</h4>
-                      <p className="text-violet-300/60 text-xs">Key metrics achieved across workflows</p>
-                    </div>
-                  </div>
-                  <span className="text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-2 py-0.5 rounded-full">
-                    Metrics
-                  </span>
-                </div>
-
-                <div className="space-y-3 mt-4">
-                  {DASHBOARD_METRICS.map(({ icon: Icon, label, value, desc, color, tag }) => (
-                    <div
-                      key={label}
-                      className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-3 hover:border-violet-400/40 transition-all"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg bg-gradient-to-br ${color} bg-opacity-20 text-white border border-white/10`}>
-                          <Icon size={16} />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <p className="text-white text-xs font-bold leading-tight">{label}</p>
-                            <span className="text-[9px] font-mono bg-white/10 text-violet-200 px-1 rounded">
-                              {tag}
-                            </span>
-                          </div>
-                          <p className="text-violet-300/60 text-[10px] mt-0.5">{desc}</p>
-                        </div>
-                      </div>
-                      <span
-                        className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 to-violet-200 font-mono shrink-0 pl-2"
-                        style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                <div className="grid sm:grid-cols-2 gap-3.5">
+                  {PIPELINE_PILLARS.map((pil) => {
+                    const Icon = pil.icon;
+                    return (
+                      <div
+                        key={pil.title}
+                        className="p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-violet-500/30 transition-all flex flex-col justify-between"
                       >
-                        <Counter value={value} duration={1.8} />
-                      </span>
-                    </div>
-                  ))}
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Icon size={16} className="text-violet-400" />
+                            <h5 className="text-zinc-100 text-xs font-bold font-heading">{pil.title}</h5>
+                          </div>
+                          <p className="text-zinc-400 text-xs leading-relaxed">{pil.desc}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              <p className="text-violet-300/60 text-[11px] mt-4 pt-3 border-t border-white/10 text-center">
-                Evaluated on rigorous cross-validation and client datasets.
-              </p>
-            </TiltCard>
-          </Reveal>
-
-          {/* Card 4: Cumulative Skill Velocity Area Chart */}
-          <Reveal className="md:col-span-2" y={30} delay={0.1}>
-            <TiltCard className="rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 sm:p-7 backdrop-blur-xl shadow-2xl hover:border-fuchsia-500/40 transition-all">
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-1">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-fuchsia-500/20 to-violet-500/20 border border-fuchsia-500/30 text-fuchsia-400">
-                    <TrendingUp size={20} />
-                  </div>
-                  <div>
-                    <h4 className="text-white text-lg font-bold" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
-                      Cumulative Internship Skill Velocity
-                    </h4>
-                    <p className="text-violet-300/60 text-xs">Hands-on impact scaling across 5 diverse internships</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold text-fuchsia-300 bg-fuchsia-500/15 border border-fuchsia-500/30 px-3 py-1 rounded-full shadow-sm">
-                    5 Roles Completed
-                  </span>
-                  <span className="text-xs font-mono font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-full">
-                    100% Industry Ready
-                  </span>
-                </div>
-              </div>
-
-              <LineChartWidget milestones={INTERNSHIP_MILESTONES} />
-            </TiltCard>
-          </Reveal>
-
-          {/* Card 5: BI Deliverables & Reporting Suite */}
-          <Reveal y={30} delay={0.2}>
-            <TiltCard className="h-full rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-amber-500/40 transition-all">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400">
-                    <LayoutDashboard size={20} />
-                  </div>
-                  <div>
-                    <h4 className="text-white text-base font-bold">BI Deliverables</h4>
-                    <p className="text-violet-300/60 text-xs">Executive Decision Cockpits</p>
-                  </div>
-                </div>
-
-                <p className="text-violet-200/80 text-xs leading-relaxed mt-3 mb-4">
-                  Specialized in architecting executive dashboards with calculated DAX measures, automated ETL pipelines, drill-down filters, and dynamic storytelling visualizations.
-                </p>
-
-                <div className="space-y-2">
-                  <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between">
-                    <span className="text-xs font-bold text-amber-200 flex items-center gap-1.5">
-                      <span>📊</span> Power BI & DAX
-                    </span>
-                    <span className="text-[10px] text-amber-300/80 font-mono">Student & Fintech BI</span>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-between">
-                    <span className="text-xs font-bold text-blue-200 flex items-center gap-1.5">
-                      <span>📈</span> Tableau Desktop
-                    </span>
-                    <span className="text-[10px] text-blue-300/80 font-mono">Hexaind Exploratory</span>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-between">
-                    <span className="text-xs font-bold text-emerald-200 flex items-center gap-1.5">
-                      <span>📑</span> Advanced Excel & VBA
-                    </span>
-                    <span className="text-[10px] text-emerald-300/80 font-mono">KPI & Financial Models</span>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/25 flex items-center justify-between">
-                    <span className="text-xs font-bold text-purple-200 flex items-center gap-1.5">
-                      <span>⚡</span> Plotly & Streamlit
-                    </span>
-                    <span className="text-[10px] text-purple-300/80 font-mono">Mutual Fund Analytics</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-violet-300">
-                <span>Ready to ingest enterprise datasets</span>
-                <span className="text-fuchsia-400 font-bold">100% Live</span>
+              <div className="mt-6 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-zinc-400">
+                <span>Enterprise dataset ingestion & modeling</span>
+                <span className="text-violet-400 font-semibold flex items-center gap-1">
+                  <CheckCircle2 size={13} /> Production Ready
+                </span>
               </div>
             </TiltCard>
           </Reveal>
         </div>
       </section>
 
-      {/* Internship Experience with Scroll-Drawn Timeline */}
+      {/* Internship Experience */}
       <section id="experience" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
         <SectionLabel
           eyebrow="Work History"
@@ -2011,7 +1625,7 @@ export default function App() {
           {/* Scroll-Drawn Vertical Timeline Line */}
           <div className="absolute left-0 top-3 bottom-3 w-[2px] bg-white/10 overflow-hidden">
             <motion.div
-              className="w-full h-full bg-gradient-to-b from-fuchsia-500 via-violet-500 to-indigo-500 origin-top"
+              className="w-full h-full bg-gradient-to-b from-violet-500 to-indigo-500 origin-top"
               initial={{ scaleY: 0 }}
               whileInView={{ scaleY: 1 }}
               viewport={{ once: false, margin: "-100px" }}
@@ -2021,40 +1635,37 @@ export default function App() {
 
           {EXPERIENCE.map((exp, i) => (
             <div key={i} className="relative group">
-              {/* Timeline Marker Dot with Spring Pop */}
               <motion.span
                 initial={{ scale: 0, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ type: "spring", stiffness: 400, damping: 20, delay: i * 0.1 }}
-                className="absolute -left-[31px] md:-left-[47px] top-1.5 w-4 h-4 rounded-full bg-[#07040f] border-2 border-fuchsia-400 shadow-md shadow-fuchsia-500/40 group-hover:scale-125 transition-transform"
+                className="absolute -left-[31px] md:-left-[47px] top-1.5 w-4 h-4 rounded-full bg-[#07040f] border-2 border-violet-400 shadow-md shadow-violet-500/40 group-hover:scale-125 transition-transform"
               />
 
-              {/* Card Sliding from Alternating Sides */}
               <Reveal direction={i % 2 === 0 ? "left" : "right"} delay={i * 0.1}>
                 <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8 backdrop-blur-md hover:border-violet-500/40 transition-all">
                   <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                     <div>
-                      <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-300">
+                      <span className="text-[10px] font-mono font-medium px-2.5 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300">
                         {exp.dates}
                       </span>
                       <h3
-                        className="text-xl font-bold text-white mt-2 group-hover:text-fuchsia-300 transition-colors"
-                        style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                        className="text-xl font-bold text-white mt-2 group-hover:text-violet-300 transition-colors font-heading"
                       >
                         {exp.role}
                       </h3>
-                      <p className="text-violet-300 font-medium text-sm">{exp.company}</p>
+                      <p className="text-zinc-400 font-medium text-sm">{exp.company}</p>
                     </div>
-                    <span className="text-xs px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-200 font-medium">
+                    <span className="text-xs px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-zinc-300 font-medium">
                       {exp.badge}
                     </span>
                   </div>
 
                   <ul className="mt-4 space-y-2.5">
                     {exp.bullets.map((bullet, bi) => (
-                      <li key={bi} className="text-violet-100/80 text-sm leading-relaxed flex gap-2.5 items-start">
-                        <CheckCircle2 size={15} className="text-fuchsia-400 shrink-0 mt-1" />
+                      <li key={bi} className="text-zinc-300 text-sm leading-relaxed flex gap-2.5 items-start">
+                        <CheckCircle2 size={15} className="text-violet-400 shrink-0 mt-1" />
                         <span>{bullet}</span>
                       </li>
                     ))}
@@ -2081,10 +1692,9 @@ export default function App() {
         <div className="mt-16">
           <Reveal>
             <div className="flex items-center gap-3 mb-6">
-              <FolderGit2 className="text-fuchsia-400" size={20} />
+              <FolderGit2 className="text-violet-400" size={20} />
               <h3
-                className="text-xl font-bold text-white tracking-wide"
-                style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                className="text-xl font-bold text-white tracking-wide font-heading"
               >
                 Additional Projects & Systems
               </h3>
@@ -2093,13 +1703,13 @@ export default function App() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {ADDITIONAL_PROJECTS.map((p, idx) => (
-              <Reveal key={p.title} delay={idx * 0.08} y={30}>
+              <Reveal key={p.title} delay={idx * 0.08} y={25}>
                 <TiltCard className="h-full rounded-2xl border border-white/10 bg-white/[0.02] p-5 backdrop-blur-md flex flex-col justify-between hover:border-violet-500/30">
                   <div>
-                    <h4 className="text-white text-sm font-bold mb-1.5">{p.title}</h4>
-                    <p className="text-violet-200/70 text-xs leading-relaxed mb-3">{p.desc}</p>
+                    <h4 className="text-white text-sm font-bold mb-1.5 font-heading">{p.title}</h4>
+                    <p className="text-zinc-400 text-xs leading-relaxed mb-3">{p.desc}</p>
                   </div>
-                  <p className="text-fuchsia-400/90 text-[11px] font-mono font-medium">{p.tech}</p>
+                  <p className="text-violet-300 text-[11px] font-mono font-medium">{p.tech}</p>
                 </TiltCard>
               </Reveal>
             ))}
@@ -2119,30 +1729,29 @@ export default function App() {
           {LEADERSHIP_ACHIEVEMENTS.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <Reveal key={idx} delay={idx * 0.1} y={30}>
-                <TiltCard className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md hover:border-fuchsia-500/40 transition-all flex flex-col justify-between">
+              <Reveal key={idx} delay={idx * 0.1} y={25}>
+                <TiltCard className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md hover:border-violet-500/40 transition-all flex flex-col justify-between">
                   <div>
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="flex items-center gap-3">
-                        <div className="p-2.5 rounded-xl bg-gradient-to-br from-fuchsia-500/20 to-violet-500/20 border border-fuchsia-500/30 text-fuchsia-300">
+                        <div className="p-2.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400">
                           <Icon size={20} />
                         </div>
                         <div>
                           <h4
-                            className="text-white font-bold text-base"
-                            style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                            className="text-white font-bold text-base font-heading"
                           >
                             {item.title}
                           </h4>
-                          <p className="text-violet-300/70 text-xs mt-0.5">{item.organization}</p>
+                          <p className="text-zinc-400 text-xs mt-0.5">{item.organization}</p>
                         </div>
                       </div>
-                      <span className="text-[10px] font-mono font-semibold px-2.5 py-1 rounded-full bg-violet-500/15 border border-violet-500/30 text-violet-300 shrink-0">
+                      <span className="text-[10px] font-mono font-medium px-2.5 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 shrink-0">
                         {item.type}
                       </span>
                     </div>
 
-                    <p className="text-violet-100/75 text-xs leading-relaxed mt-2">{item.description}</p>
+                    <p className="text-zinc-300 text-xs leading-relaxed mt-2">{item.description}</p>
                   </div>
                 </TiltCard>
               </Reveal>
@@ -2151,7 +1760,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Certifications Section */}
+      {/* REDESIGNED PROFESSIONAL CERTIFICATIONS SECTION WITH ZERO BLANK SPACES */}
       <section id="certifications" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
         <SectionLabel
           eyebrow="Verified Credentials"
@@ -2159,62 +1768,27 @@ export default function App() {
           subtitle="Credentials from Deloitte, IBM, NPTEL, Infosys, GUVI, UiPath, and Monday.com confirming expertise across analytics, AI, programming, and cybersecurity."
         />
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {CERTIFICATIONS.map((cert, idx) => {
-            const Icon = cert.icon;
-            return (
-              <Reveal key={cert.category} delay={idx * 0.08} y={35}>
-                <TiltCard className="h-full rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md hover:border-violet-500/40 transition-all flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className={`p-2.5 rounded-2xl bg-gradient-to-br ${cert.color} bg-opacity-20 border border-white/15 text-white`}>
-                        <Icon size={18} />
-                      </div>
-                      <h4 className="text-white font-bold text-sm">{cert.category}</h4>
-                    </div>
-
-                    <ul className="space-y-3">
-                      {cert.items.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 text-xs">
-                          <Award size={14} className="text-fuchsia-400 shrink-0 mt-0.5" />
-                          <div>
-                            <p className="text-violet-100 font-medium leading-snug">{item.name}</p>
-                            <p className="text-violet-300/50 text-[10px] mt-0.5 font-mono">{item.issuer}</p>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </TiltCard>
-              </Reveal>
-            );
-          })}
-        </div>
+        <CertificationsShowcase />
       </section>
 
       {/* Contact & Connect Section */}
       <section id="contact" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
-        <Reveal y={40}>
-          <TiltCard className="rounded-3xl border border-white/15 bg-gradient-to-br from-violet-900/30 via-fuchsia-900/20 to-indigo-950/40 p-8 md:p-14 text-center backdrop-blur-2xl shadow-2xl relative overflow-hidden">
-            {/* Subtle animated light highlight */}
-            <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-fuchsia-500/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 bg-violet-500/10 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-300 text-xs font-semibold mb-6">
+        <Reveal y={35}>
+          <TiltCard className="rounded-2xl border border-white/15 bg-gradient-to-br from-violet-950/40 via-[#0a0618] to-indigo-950/40 p-8 md:p-14 text-center backdrop-blur-2xl shadow-2xl relative overflow-hidden">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-medium mb-6">
               <Sparkles size={12} /> Open For Immediate Opportunities
             </div>
 
             <h2
-              className="text-3xl md:text-5xl font-extrabold text-white max-w-2xl mx-auto leading-tight"
-              style={{ fontFamily: "Space Grotesk, sans-serif" }}
+              className="text-3xl md:text-5xl font-extrabold text-white max-w-2xl mx-auto leading-tight font-heading"
             >
               Let's Build Impactful,{" "}
-              <span className="bg-gradient-to-r from-fuchsia-400 via-pink-300 to-violet-300 bg-clip-text text-transparent animate-gradient-text">
+              <span className="bg-gradient-to-r from-violet-200 via-fuchsia-300 to-indigo-200 bg-clip-text text-transparent animate-gradient-text">
                 Data-Driven Systems
               </span>
             </h2>
 
-            <p className="text-violet-200/80 mt-4 max-w-lg mx-auto text-sm md:text-base leading-relaxed">
+            <p className="text-zinc-300 mt-4 max-w-lg mx-auto text-sm md:text-base leading-relaxed">
               Interested in discussing data analytics, business intelligence dashboards, or machine learning engineering?
               Feel free to reach out directly.
             </p>
@@ -2223,21 +1797,21 @@ export default function App() {
               <Magnetic strength={0.3}>
                 <a
                   href="mailto:poorani0307@gmail.com"
-                  className="flex items-center gap-2.5 border border-white/15 bg-white/5 backdrop-blur-md px-5 py-3 rounded-full text-xs sm:text-sm font-medium hover:bg-white/10 hover:border-fuchsia-400 transition-all"
+                  className="flex items-center gap-2.5 border border-white/15 bg-white/[0.04] backdrop-blur-md px-5 py-3 rounded-full text-xs sm:text-sm font-medium text-zinc-200 hover:bg-white/[0.08] hover:border-violet-400 transition-all"
                 >
-                  <Mail size={15} className="text-fuchsia-400" /> poorani0307@gmail.com
+                  <Mail size={15} className="text-violet-400" /> poorani0307@gmail.com
                 </a>
               </Magnetic>
               <Magnetic strength={0.3}>
                 <a
                   href="tel:6380045604"
-                  className="flex items-center gap-2.5 border border-white/15 bg-white/5 backdrop-blur-md px-5 py-3 rounded-full text-xs sm:text-sm font-medium hover:bg-white/10 hover:border-fuchsia-400 transition-all"
+                  className="flex items-center gap-2.5 border border-white/15 bg-white/[0.04] backdrop-blur-md px-5 py-3 rounded-full text-xs sm:text-sm font-medium text-zinc-200 hover:bg-white/[0.08] hover:border-violet-400 transition-all"
                 >
-                  <Phone size={15} className="text-fuchsia-400" /> +91 6380045604
+                  <Phone size={15} className="text-violet-400" /> +91 6380045604
                 </a>
               </Magnetic>
-              <div className="flex items-center gap-2.5 border border-white/10 bg-white/[0.02] px-5 py-3 rounded-full text-xs text-violet-300/80">
-                <MapPin size={15} className="text-fuchsia-400 shrink-0" /> No 3, Kamarajar street, Saibaba Colony, Coimbatore
+              <div className="flex items-center gap-2.5 border border-white/10 bg-white/[0.02] px-5 py-3 rounded-full text-xs text-zinc-400">
+                <MapPin size={15} className="text-violet-400 shrink-0" /> No 3, Kamarajar street, Saibaba Colony, Coimbatore
               </div>
             </div>
 
@@ -2247,7 +1821,7 @@ export default function App() {
                   href="https://linkedin.com/in/poorani-s-046357340"
                   target="_blank"
                   rel="noreferrer"
-                  className="w-12 h-12 rounded-full border border-white/15 bg-white/5 flex items-center justify-center hover:bg-white/15 hover:text-fuchsia-400 transition-all inline-flex"
+                  className="w-12 h-12 rounded-full border border-white/15 bg-white/[0.04] flex items-center justify-center hover:bg-white/[0.08] hover:border-violet-400 transition-all inline-flex text-zinc-300 hover:text-white"
                   title="LinkedIn Profile"
                 >
                   <Linkedin size={18} />
@@ -2258,7 +1832,7 @@ export default function App() {
                   href="https://github.com/Poorani-S"
                   target="_blank"
                   rel="noreferrer"
-                  className="w-12 h-12 rounded-full border border-white/15 bg-white/5 flex items-center justify-center hover:bg-white/15 hover:text-fuchsia-400 transition-all inline-flex"
+                  className="w-12 h-12 rounded-full border border-white/15 bg-white/[0.04] flex items-center justify-center hover:bg-white/[0.08] hover:border-violet-400 transition-all inline-flex text-zinc-300 hover:text-white"
                   title="GitHub Profile"
                 >
                   <Github size={18} />
@@ -2271,7 +1845,7 @@ export default function App() {
                 <a
                   href="/resume.pdf"
                   download="Poorani_S_Resume.pdf"
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 via-violet-600 to-indigo-600 px-7 py-3.5 rounded-full text-sm font-bold shadow-xl shadow-purple-500/30 hover:scale-105 transition-all"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 px-7 py-3.5 rounded-full text-sm font-bold shadow-xl shadow-violet-600/30 hover:scale-105 transition-all text-white"
                 >
                   <Download size={16} /> Download Official Resume (PDF)
                 </a>
@@ -2283,12 +1857,12 @@ export default function App() {
 
       {/* Footer */}
       <Reveal y={20}>
-        <footer className="relative z-10 max-w-6xl mx-auto px-5 py-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-violet-300/50">
+        <footer className="relative z-10 max-w-6xl mx-auto px-5 py-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
           <p>&copy; {new Date().getFullYear()} Poorani S — Data Analyst Portfolio</p>
           <p className="flex items-center gap-2">
             <span>Designed & Developed with React & Three.js</span>
             <span>•</span>
-            <span className="text-violet-400">Coimbatore, India</span>
+            <span className="text-zinc-400">Coimbatore, India</span>
           </p>
         </footer>
       </Reveal>
