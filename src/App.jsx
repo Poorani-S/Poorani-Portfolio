@@ -6,7 +6,7 @@ import {
   BarChart3, TrendingUp, Database, LayoutDashboard, Cpu, Cloud,
   GitBranch, Target, Boxes, Activity, CheckCircle2, Briefcase, Bot,
   FolderGit2, Code2, Layers, BookOpen, Star, ShieldCheck, Compass,
-  Search, FileSpreadsheet, Terminal
+  Search, FileSpreadsheet, Terminal, Zap, PieChart, LineChart
 } from "lucide-react";
 
 const NAV = [
@@ -248,7 +248,7 @@ const LEADERSHIP_ACHIEVEMENTS = [
   {
     title: "Class Representative (Current)",
     organization: "Sri Ramakrishna College of Arts & Science for Women",
-    icon: UsersIcon,
+    icon: Bot,
     description:
       "Represent the student cohort, coordinate key communications with department faculty, organize academic activities, and lead student welfare initiatives.",
     type: "Leadership",
@@ -278,10 +278,6 @@ const LEADERSHIP_ACHIEVEMENTS = [
     type: "Award",
   },
 ];
-
-function UsersIcon(props) {
-  return <Bot {...props} />;
-}
 
 const CERTIFICATIONS = [
   {
@@ -325,37 +321,35 @@ const CERTIFICATIONS = [
 ];
 
 const DASHBOARD_METRICS = [
-  { label: "Data Records Analyzed", value: "50,000+", icon: Database, desc: "Fintech, Student & Sensor Data" },
-  { label: "AI Model Accuracy", value: "94.0%", icon: Target, desc: "FixieAI Equipment Failure Predictor" },
-  { label: "Deep Learning Accuracy", value: "88%+", icon: Cpu, desc: "SmartWaste AI 5-Class EfficientNet" },
-  { label: "Production Dashboards", value: "15+", icon: LayoutDashboard, desc: "Power BI, Streamlit, Tableau" },
+  { label: "Data Records Processed", value: "50,000+", icon: Database, desc: "Fintech, Student & Sensor Data", color: "from-fuchsia-500 to-pink-500", tag: "+100% Validated" },
+  { label: "AI Model Accuracy", value: "94.0%", icon: Target, desc: "FixieAI Equipment Failure Predictor", color: "from-violet-500 to-purple-500", tag: "Industrial ML" },
+  { label: "Deep Learning Accuracy", value: "88%+", icon: Cpu, desc: "SmartWaste AI 5-Class EfficientNet", color: "from-cyan-500 to-blue-500", tag: "Grad-CAM Vision" },
 ];
 
 const TOOL_PROFICIENCY = [
-  { label: "Python", value: 94 },
-  { label: "SQL", value: 92 },
-  { label: "Power BI", value: 90 },
-  { label: "Excel", value: 92 },
-  { label: "Tableau", value: 85 },
+  { label: "Python", value: 94, icon: "🐍", color: "from-violet-500 to-indigo-500" },
+  { label: "SQL", value: 92, icon: "🗄️", color: "from-fuchsia-500 to-pink-500" },
+  { label: "Power BI", value: 90, icon: "📊", color: "from-amber-500 to-orange-500" },
+  { label: "Excel", value: 92, icon: "📑", color: "from-emerald-500 to-teal-500" },
+  { label: "Tableau", value: 85, icon: "📈", color: "from-cyan-500 to-blue-500" },
 ];
 
-const INTERNSHIP_GROWTH_POINTS = [25, 42, 58, 72, 88, 96];
-const INTERNSHIP_GROWTH_LABELS = [
-  "Hexaind (Data Sci)",
-  "NoviTech (Analytics)",
-  "Kambaa (Full-Stack & AI)",
-  "IBM / Adroit (ML)",
-  "Bluestock (Fintech)",
-  "Present (Full Ready)",
+const INTERNSHIP_MILESTONES = [
+  { company: "Hexaind", focus: "Data Science & Tableau", date: "May–Jul '25", level: 30 },
+  { company: "NoviTech", focus: "Behavior Analytics & BI", date: "Sep–Oct '25", level: 48 },
+  { company: "Kambaa", focus: "Full-Stack AI & Chatbot", date: "Dec '25–Apr '26", level: 66 },
+  { company: "IBM / Adroit", focus: "Predictive ML (94%)", date: "May '26", level: 82 },
+  { company: "Bluestock", focus: "Fintech & KPI Dashboards", date: "May–Jul '26", level: 96 },
+  { company: "Present", focus: "Ready to Deploy Impact", date: "2026+", level: 100 },
 ];
 
 const TECH_PILLARS = [
-  { icon: Database, label: "SQL & MySQL", color: "text-blue-400" },
-  { icon: BarChart3, label: "Power BI / Tableau", color: "text-amber-400" },
-  { icon: Cpu, label: "Scikit & TensorFlow", color: "text-fuchsia-400" },
-  { icon: Bot, label: "Hybrid RAG & LLMs", color: "text-purple-400" },
-  { icon: Layers, label: "React & FastAPI", color: "text-cyan-400" },
-  { icon: GitBranch, label: "Git & Monday.com", color: "text-emerald-400" },
+  { icon: Database, label: "SQL & MySQL", sub: "Relational Modeling", color: "text-blue-400", border: "border-blue-500/30", bg: "bg-blue-500/10" },
+  { icon: BarChart3, label: "Power BI / Tableau", sub: "Executive Cockpits", color: "text-amber-400", border: "border-amber-500/30", bg: "bg-amber-500/10" },
+  { icon: Cpu, label: "Scikit & TensorFlow", sub: "Predictive & DL Models", color: "text-fuchsia-400", border: "border-fuchsia-500/30", bg: "bg-fuchsia-500/10" },
+  { icon: Bot, label: "Hybrid RAG & LLMs", sub: "FAISS + BM25 Retrieval", color: "text-purple-400", border: "border-purple-500/30", bg: "bg-purple-500/10" },
+  { icon: Layers, label: "React & FastAPI", sub: "High-Perf Full-Stack", color: "text-cyan-400", border: "border-cyan-500/30", bg: "bg-cyan-500/10" },
+  { icon: GitBranch, label: "Git & Monday.com", sub: "Agile CI/CD & PM", color: "text-emerald-400", border: "border-emerald-500/30", bg: "bg-emerald-500/10" },
 ];
 
 function ParticleField() {
@@ -591,8 +585,8 @@ function TiltCard({ children, className = "" }) {
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
     setStyle({
-      transform: `perspective(900px) rotateY(${x * 14}deg) rotateX(${-y * 14}deg) translateZ(18px) scale(1.015)`,
-      boxShadow: `${-x * 30}px ${-y * 30 + 16}px 40px -10px rgba(124,58,237,0.35)`,
+      transform: `perspective(900px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) translateZ(16px) scale(1.012)`,
+      boxShadow: `${-x * 25}px ${-y * 25 + 14}px 35px -8px rgba(124,58,237,0.35)`,
       "--glow-x": `${(x + 0.5) * 100}%`,
       "--glow-y": `${(y + 0.5) * 100}%`,
     });
@@ -600,7 +594,7 @@ function TiltCard({ children, className = "" }) {
   function handleLeave() {
     setStyle({
       transform: "perspective(900px) rotateY(0deg) rotateX(0deg) translateZ(0px) scale(1)",
-      boxShadow: "0px 10px 30px -18px rgba(124,58,237,0.2)",
+      boxShadow: "0px 10px 30px -18px rgba(124,58,237,0.18)",
     });
   }
 
@@ -620,123 +614,217 @@ function TiltCard({ children, className = "" }) {
       <div
         className="absolute inset-0 rounded-2xl opacity-0 hover:opacity-100 transition-opacity pointer-events-none"
         style={{
-          background: `radial-gradient(220px circle at var(--glow-x, 50%) var(--glow-y, 50%), rgba(168,85,247,0.22), transparent 70%)`,
+          background: `radial-gradient(220px circle at var(--glow-x, 50%) var(--glow-y, 50%), rgba(168,85,247,0.2), transparent 70%)`,
         }}
       />
-      <div style={{ transform: "translateZ(16px)", transformStyle: "preserve-3d" }}>{children}</div>
+      <div style={{ transform: "translateZ(14px)", transformStyle: "preserve-3d" }}>{children}</div>
     </div>
   );
 }
 
 function BarChartWidget({ data }) {
-  const ref = useRef(null);
-  const [active, setActive] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [hoveredIdx, setHoveredIdx] = useState(null);
+
   useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setActive(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.4 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
+    const timer = setTimeout(() => setMounted(true), 150);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div ref={ref} className="flex items-end gap-2.5 h-28">
-      {data.map((d, i) => (
-        <div key={d.label} className="flex-1 flex flex-col items-center gap-1.5">
-          <div className="w-full rounded-t-md bg-white/5 h-full flex items-end overflow-hidden">
-            <div
-              className="w-full rounded-t-md bg-gradient-to-t from-violet-600 via-fuchsia-500 to-pink-400 transition-all duration-700 ease-out"
-              style={{
-                height: active ? `${d.value}%` : "0%",
-                transitionDelay: `${i * 80}ms`,
-                boxShadow: "0 0 14px rgba(217,70,239,0.45)",
-              }}
-            />
-          </div>
-          <span className="text-[10px] text-violet-300/80 font-medium leading-none">{d.label}</span>
-          <span className="text-[9px] text-fuchsia-400/80 font-mono leading-none">{d.value}%</span>
+    <div className="w-full flex flex-col justify-between pt-3">
+      {/* Visual Chart Track */}
+      <div className="flex items-end justify-between gap-3 h-32 px-1 relative">
+        {/* Grid Guidelines */}
+        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20">
+          <div className="border-b border-violet-400 border-dashed w-full" />
+          <div className="border-b border-violet-400 border-dashed w-full" />
+          <div className="border-b border-violet-400 border-dashed w-full" />
         </div>
-      ))}
+
+        {data.map((d, i) => (
+          <div
+            key={d.label}
+            className="flex-1 h-full flex flex-col items-center justify-end relative group cursor-pointer"
+            onMouseEnter={() => setHoveredIdx(i)}
+            onMouseLeave={() => setHoveredIdx(null)}
+          >
+            {/* Tooltip on hover */}
+            {hoveredIdx === i && (
+              <div className="absolute -top-7 bg-violet-950/90 border border-fuchsia-400 text-fuchsia-200 text-[10px] font-bold px-2 py-0.5 rounded shadow-lg backdrop-blur-md z-20 whitespace-nowrap animate-in fade-in zoom-in-95">
+                {d.label}: {d.value}%
+              </div>
+            )}
+
+            {/* Score label above bar */}
+            <span
+              className={`text-[10px] font-mono font-bold mb-1.5 transition-all duration-300 ${
+                hoveredIdx === i ? "text-fuchsia-300 scale-110" : "text-violet-300/80"
+              }`}
+            >
+              {d.value}%
+            </span>
+
+            {/* Bar Outer Track */}
+            <div className="w-full bg-white/[0.06] rounded-t-lg h-24 relative flex items-end overflow-hidden p-0.5 border border-white/5 group-hover:border-fuchsia-500/40 transition-colors">
+              {/* Inner Gradient Bar */}
+              <div
+                className={`w-full rounded-t-md bg-gradient-to-t ${d.color || "from-violet-600 via-fuchsia-500 to-pink-400"} transition-all duration-1000 ease-out relative`}
+                style={{
+                  height: mounted ? `${d.value}%` : "0%",
+                  transitionDelay: `${i * 100}ms`,
+                  boxShadow: hoveredIdx === i ? "0 0 20px rgba(232,121,249,0.8)" : "0 0 10px rgba(217,70,239,0.35)",
+                }}
+              >
+                {/* Glowing Top Cap */}
+                <div className="absolute top-0 inset-x-0 h-1 bg-white/80 rounded-t-md shadow-sm" />
+              </div>
+            </div>
+
+            {/* Tech Name Label */}
+            <div className="mt-2.5 flex items-center gap-1 text-center">
+              <span className="text-xs">{d.icon}</span>
+              <span className="text-[11px] font-semibold text-violet-100 group-hover:text-fuchsia-300 transition-colors">
+                {d.label}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-function LineChartWidget({ points, labels }) {
-  const ref = useRef(null);
-  const [active, setActive] = useState(false);
+function LineChartWidget({ milestones }) {
+  const [mounted, setMounted] = useState(false);
+  const [activeNode, setActiveNode] = useState(null);
+
   useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setActive(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.4 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
+    const timer = setTimeout(() => setMounted(true), 200);
+    return () => clearTimeout(timer);
   }, []);
 
-  const w = 320,
-    h = 110,
-    pad = 12;
-  const max = Math.max(...points),
-    min = Math.min(...points);
-  const coords = points.map((p, i) => {
-    const x = pad + (i / (points.length - 1)) * (w - pad * 2);
-    const y = h - pad - ((p - min) / (max - min || 1)) * (h - pad * 2);
-    return [x, y];
+  const w = 540,
+    h = 130,
+    pad = 28;
+  const count = milestones.length;
+
+  const points = milestones.map((m, i) => {
+    const x = pad + (i / (count - 1)) * (w - pad * 2);
+    const y = h - pad - (m.level / 100) * (h - pad * 2);
+    return { x, y, ...m };
   });
-  const linePath = coords.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
-  const areaPath = `${linePath} L${coords[coords.length - 1][0]},${h} L${coords[0][0]},${h} Z`;
-  const last = coords[coords.length - 1];
+
+  const linePath = points
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
+    .join(" ");
+
+  const areaPath = `${linePath} L ${points[count - 1].x} ${h - 8} L ${points[0].x} ${h - 8} Z`;
 
   return (
-    <div ref={ref}>
-      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-28 overflow-visible">
-        <defs>
-          <linearGradient id="growthLineFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#e879f9" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#7c3aed" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <path
-          d={areaPath}
-          fill="url(#growthLineFill)"
-          style={{ opacity: active ? 1 : 0, transition: "opacity 0.8s ease-out 0.3s" }}
-        />
-        <path
-          d={linePath}
-          fill="none"
-          stroke="#e879f9"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          style={{
-            filter: "drop-shadow(0 0 8px rgba(232,121,249,0.7))",
-            strokeDasharray: 600,
-            strokeDashoffset: active ? 0 : 600,
-            transition: "stroke-dashoffset 1.2s ease-out",
-          }}
-        />
-        {active && (
-          <circle cx={last[0]} cy={last[1]} r="4.5" fill="#ffffff">
-            <animate attributeName="r" values="3.5;6;3.5" dur="1.8s" repeatCount="indefinite" />
-          </circle>
+    <div className="w-full pt-2">
+      <div className="relative">
+        <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-32 overflow-visible">
+          <defs>
+            <linearGradient id="velocityGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#d946ef" stopOpacity="0.45" />
+              <stop offset="60%" stopColor="#8b5cf6" stopOpacity="0.15" />
+              <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="strokeGlow" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#818cf8" />
+              <stop offset="50%" stopColor="#d946ef" />
+              <stop offset="100%" stopColor="#38bdf8" />
+            </linearGradient>
+          </defs>
+
+          {/* Area Fill */}
+          <path
+            d={areaPath}
+            fill="url(#velocityGradient)"
+            style={{
+              opacity: mounted ? 1 : 0,
+              transition: "opacity 1s ease-out 0.3s",
+            }}
+          />
+
+          {/* Path Line */}
+          <path
+            d={linePath}
+            fill="none"
+            stroke="url(#strokeGlow)"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{
+              filter: "drop-shadow(0 0 10px rgba(217,70,239,0.7))",
+              strokeDasharray: 900,
+              strokeDashoffset: mounted ? 0 : 900,
+              transition: "stroke-dashoffset 1.4s ease-out",
+            }}
+          />
+
+          {/* Interactive Milestone Nodes */}
+          {points.map((p, i) => (
+            <g
+              key={i}
+              className="cursor-pointer group"
+              onMouseEnter={() => setActiveNode(p)}
+              onMouseLeave={() => setActiveNode(null)}
+            >
+              {/* Pulsing ring for latest point */}
+              {i === count - 1 && mounted && (
+                <circle cx={p.x} cy={p.y} r="9" fill="none" stroke="#38bdf8" strokeWidth="1.5">
+                  <animate attributeName="r" values="6;13;6" dur="2s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.8;0;0.8" dur="2s" repeatCount="indefinite" />
+                </circle>
+              )}
+
+              {/* Node Dot */}
+              <circle
+                cx={p.x}
+                cy={p.y}
+                r={activeNode?.company === p.company ? "6.5" : "4.5"}
+                fill="#ffffff"
+                stroke="#d946ef"
+                strokeWidth="2.5"
+                style={{
+                  transition: "all 0.2s ease-out",
+                  filter: "drop-shadow(0 0 6px rgba(217,70,239,0.9))",
+                }}
+              />
+            </g>
+          ))}
+        </svg>
+
+        {/* Milestone Node Details Overlay */}
+        {activeNode && (
+          <div className="absolute top-0 right-4 bg-black/80 border border-fuchsia-500/50 backdrop-blur-md rounded-xl px-3 py-1.5 shadow-xl flex items-center gap-2 animate-in fade-in">
+            <span className="w-2 h-2 rounded-full bg-fuchsia-400" />
+            <span className="text-xs font-bold text-white">{activeNode.company}</span>
+            <span className="text-[11px] text-violet-300 font-medium">({activeNode.focus})</span>
+            <span className="text-[10px] text-fuchsia-300 font-mono bg-fuchsia-500/20 px-1.5 py-0.5 rounded">
+              {activeNode.date}
+            </span>
+          </div>
         )}
-      </svg>
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-1 mt-2 text-center">
-        {labels.map((l) => (
-          <span key={l} className="text-[9px] text-violet-300/70 font-mono leading-tight">
-            {l}
-          </span>
+      </div>
+
+      {/* High-Contrast Readable Labels */}
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-3 pt-2 border-t border-white/5">
+        {milestones.map((m, i) => (
+          <div
+            key={i}
+            className={`flex flex-col items-center text-center p-1.5 rounded-lg border transition-all ${
+              activeNode?.company === m.company
+                ? "bg-fuchsia-500/15 border-fuchsia-500/40 shadow-sm"
+                : "bg-white/[0.02] border-white/5 hover:border-violet-500/30"
+            }`}
+          >
+            <p className="text-[11px] font-bold text-violet-100 leading-tight">{m.company}</p>
+            <p className="text-[9px] text-fuchsia-300/90 font-medium truncate w-full mt-0.5">{m.focus}</p>
+            <p className="text-[8px] text-violet-400 font-mono mt-0.5">{m.date}</p>
+          </div>
         ))}
       </div>
     </div>
@@ -925,27 +1013,54 @@ export default function App() {
       {/* Hero Section */}
       <section className="relative z-10 max-w-6xl mx-auto px-5 pt-12 md:pt-16 pb-20 grid lg:grid-cols-12 gap-10 items-center">
         <div className="lg:col-span-7">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-300 text-xs font-medium mb-6 shadow-sm">
-            <Sparkles size={13} className="animate-spin" style={{ animationDuration: "6s" }} />
-            Final-Year B.Sc CS (Data Analytics) • Open for Data Analyst Roles
+          {/* Enhanced Glowing Status Pill */}
+          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-fuchsia-500/40 bg-gradient-to-r from-fuchsia-500/15 via-purple-500/15 to-violet-500/15 text-fuchsia-200 text-xs sm:text-sm font-semibold mb-6 shadow-lg shadow-fuchsia-500/20 backdrop-blur-md hover:border-fuchsia-400 transition-all">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-fuchsia-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-fuchsia-400"></span>
+            </span>
+            <span>Final-Year B.Sc CS (Data Analytics)</span>
+            <span className="text-violet-400 font-bold">•</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-fuchsia-200 to-indigo-200 font-bold">
+              Open for Data Analyst Roles
+            </span>
           </div>
 
+          {/* High-Impact Headline with Rich Gradient Layers */}
           <h1
-            className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.1] tracking-tight"
+            className="text-4xl sm:text-5xl lg:text-[62px] font-extrabold leading-[1.1] tracking-tight text-white"
             style={{ fontFamily: "Space Grotesk, sans-serif" }}
           >
             Turning Raw Data Into{" "}
-            <span className="bg-gradient-to-r from-fuchsia-400 via-violet-300 to-indigo-400 bg-clip-text text-transparent">
-              Actionable Business Intelligence
+            <span className="relative block mt-1">
+              <span className="bg-gradient-to-r from-fuchsia-400 via-pink-300 to-violet-400 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(217,70,239,0.35)]">
+                Actionable Business
+              </span>{" "}
+              <span className="bg-gradient-to-r from-violet-300 via-indigo-300 to-cyan-300 bg-clip-text text-transparent">
+                Intelligence
+              </span>
             </span>
           </h1>
 
-          <p className="mt-6 text-violet-200/80 text-base md:text-lg leading-relaxed font-normal max-w-2xl">
-            Hi, I'm <strong className="text-white font-semibold">Poorani S</strong>. Final-year Data Analytics
-            student with hands-on internship experience across Fintech, Machine Learning, AI Full-Stack,
-            and Business Intelligence. Proficient in Python, SQL, Power BI, Tableau, and Excel to empower
-            growth-oriented decisions.
-          </p>
+          {/* Styled Introduction Card with Tagged Highlights */}
+          <div className="mt-7 text-violet-100/90 text-base sm:text-lg leading-relaxed max-w-2xl bg-white/[0.03] border border-white/10 rounded-2xl p-5 sm:p-6 backdrop-blur-md shadow-lg shadow-purple-950/20">
+            <p className="font-normal">
+              Hi, I'm <strong className="text-white font-bold text-lg bg-gradient-to-r from-fuchsia-400 to-violet-300 bg-clip-text text-transparent">Poorani S</strong> — a final-year Data Analytics student with hands-on internship experience across{" "}
+              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-fuchsia-500/15 border border-fuchsia-500/30 text-fuchsia-200 text-xs sm:text-sm font-semibold">Fintech</span>,{" "}
+              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-violet-500/15 border border-violet-500/30 text-violet-200 text-xs sm:text-sm font-semibold">Machine Learning</span>,{" "}
+              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-cyan-500/15 border border-cyan-500/30 text-cyan-200 text-xs sm:text-sm font-semibold">AI Full-Stack</span>, and{" "}
+              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-200 text-xs sm:text-sm font-semibold">Business Intelligence</span>.
+            </p>
+            <div className="mt-3.5 pt-3.5 border-t border-white/10 flex flex-wrap items-center gap-2 text-sm text-violet-200">
+              <span className="text-xs text-violet-300/70 font-medium">Core Toolchain:</span>
+              <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Python</span>
+              <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">SQL</span>
+              <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Power BI</span>
+              <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Tableau</span>
+              <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Excel</span>
+              <span className="text-xs text-fuchsia-300 font-medium ml-auto">→ Empowering Growth Decisions</span>
+            </div>
+          </div>
 
           <div className="mt-8 flex flex-wrap gap-3.5 items-center">
             <button
@@ -1004,10 +1119,10 @@ export default function App() {
         {/* Interactive 3D Orbit Canvas */}
         <div className="lg:col-span-5 relative h-[360px] md:h-[440px] flex items-center justify-center">
           <Hero3D />
-          <div className="absolute -bottom-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl px-4 py-2 flex items-center gap-3">
+          <div className="absolute -bottom-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl px-4 py-2 flex items-center gap-3 shadow-lg">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-xs text-violet-200">
-              Coimbatore, Tamil Nadu • <span className="text-fuchsia-300 font-mono">poorani0307@gmail.com</span>
+              Coimbatore, Tamil Nadu • <span className="text-fuchsia-300 font-mono font-semibold">poorani0307@gmail.com</span>
             </span>
           </div>
         </div>
@@ -1168,116 +1283,211 @@ export default function App() {
         </div>
       </section>
 
-      {/* Analytics Hub / Live Visualizations */}
+      {/* IMPROVED ANALYTICS HUB / LIVE VISUALIZATIONS SECTION */}
       <section id="dashboards" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
         <SectionLabel
-          eyebrow="Analytics Telemetry"
+          eyebrow="Live Analytics Telemetry"
           title="Interactive Analytics Hub"
-          subtitle="A live demonstration of how I structure metrics, transform raw data, and engineer executive dashboards."
+          subtitle="A production-grade dashboard experience showcasing quantitative telemetry, architecture foundations, and progression velocity."
         />
 
-        <div className="grid md:grid-cols-3 gap-5">
-          {/* Tool Proficiency Bar Graph */}
-          <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md">
-            <div className="flex items-center gap-2.5 mb-1">
-              <BarChart3 size={18} className="text-fuchsia-400" />
-              <h4 className="text-white text-sm font-bold">Analytics Tool Strength</h4>
-            </div>
-            <p className="text-violet-300/50 text-xs mb-5">Validated through hands-on project implementations</p>
-            <BarChartWidget data={TOOL_PROFICIENCY} />
-          </TiltCard>
-
-          {/* Integrated Tech Pillars */}
-          <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md">
-            <div className="flex items-center gap-2.5 mb-1">
-              <Boxes size={18} className="text-fuchsia-400" />
-              <h4 className="text-white text-sm font-bold">Core Architecture Stack</h4>
-            </div>
-            <p className="text-violet-300/50 text-xs mb-4">Technologies powering my end-to-end pipelines</p>
-            <div className="grid grid-cols-2 gap-2.5">
-              {TECH_PILLARS.map(({ icon: Icon, label, color }) => (
-                <div
-                  key={label}
-                  className="flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.02] p-2.5 hover:border-violet-500/30 transition-colors"
-                >
-                  <Icon size={16} className={color} />
-                  <span className="text-[11px] text-violet-200/90 font-medium truncate">{label}</span>
-                </div>
-              ))}
-            </div>
-          </TiltCard>
-
-          {/* Quantitative Snapshot */}
-          <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md">
-            <div className="flex items-center gap-2.5 mb-1">
-              <Activity size={18} className="text-fuchsia-400" />
-              <h4 className="text-white text-sm font-bold">Quantitative Impact</h4>
-            </div>
-            <p className="text-violet-300/50 text-xs mb-4">Key numbers achieved across real workflows</p>
-            <div className="space-y-2.5">
-              {DASHBOARD_METRICS.slice(0, 3).map(({ icon: Icon, label, value, desc }) => (
-                <div
-                  key={label}
-                  className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Icon size={15} className="text-fuchsia-400" />
-                    <div>
-                      <p className="text-white text-xs font-semibold">{label}</p>
-                      <p className="text-violet-300/50 text-[10px]">{desc}</p>
-                    </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Card 1: Tool Proficiency with Rich Animated Bars */}
+          <TiltCard className="rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-fuchsia-500/50 transition-all">
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-fuchsia-500/15 border border-fuchsia-500/30 text-fuchsia-400">
+                    <BarChart3 size={18} />
                   </div>
-                  <span
-                    className="text-fuchsia-300 text-sm font-bold font-mono"
-                    style={{ fontFamily: "Space Grotesk, sans-serif" }}
-                  >
-                    {value}
-                  </span>
+                  <div>
+                    <h4 className="text-white text-base font-bold">Analytics Tool Strength</h4>
+                    <p className="text-violet-300/60 text-xs">Hands-on project accuracy</p>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </TiltCard>
-
-          {/* Internship Progression Area Chart */}
-          <TiltCard className="md:col-span-2 rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md">
-            <div className="flex items-center justify-between gap-2 mb-1">
-              <div className="flex items-center gap-2.5">
-                <TrendingUp size={18} className="text-fuchsia-400" />
-                <h4 className="text-white text-sm font-bold">Cumulative Internship Skill Velocity</h4>
+                <span className="text-[10px] font-mono font-bold bg-fuchsia-500/10 text-fuchsia-300 border border-fuchsia-500/20 px-2 py-0.5 rounded-full">
+                  Verified
+                </span>
               </div>
-              <span className="text-[11px] font-mono text-fuchsia-400 bg-fuchsia-500/10 px-2.5 py-0.5 rounded-full border border-fuchsia-500/20">
-                5 Completed
-              </span>
+
+              <div className="mt-4">
+                <BarChartWidget data={TOOL_PROFICIENCY} />
+              </div>
             </div>
-            <p className="text-violet-300/50 text-xs mb-4">
-              Hands-on mastery scaling across Data Analytics, ML, Full-Stack, and Financial BI
+
+            <p className="text-violet-300/60 text-[11px] mt-4 pt-3 border-t border-white/10 text-center">
+              Benchmarked across data transformation, exploratory modeling & DAX queries.
             </p>
-            <LineChartWidget points={INTERNSHIP_GROWTH_POINTS} labels={INTERNSHIP_GROWTH_LABELS} />
           </TiltCard>
 
-          {/* Business Dashboard Highlights */}
-          <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md flex flex-col justify-center">
-            <div className="flex items-center gap-2.5 mb-2">
-              <LayoutDashboard size={18} className="text-fuchsia-400" />
-              <h4 className="text-white text-sm font-bold">BI Deliverables</h4>
+          {/* Card 2: Core Architecture Stack without truncation */}
+          <TiltCard className="rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-violet-500/50 transition-all">
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-400">
+                    <Boxes size={18} />
+                  </div>
+                  <div>
+                    <h4 className="text-white text-base font-bold">Core Architecture Stack</h4>
+                    <p className="text-violet-300/60 text-xs">Technologies powering pipelines</p>
+                  </div>
+                </div>
+                <span className="text-[10px] font-mono font-bold bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-full">
+                  6 Pillars
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5 mt-5">
+                {TECH_PILLARS.map(({ icon: Icon, label, sub, color, border, bg }) => (
+                  <div
+                    key={label}
+                    className={`flex flex-col rounded-xl border ${border} ${bg} p-2.5 hover:scale-[1.03] transition-all cursor-pointer`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Icon size={16} className={color} />
+                      <span className="text-xs font-bold text-white leading-tight">{label}</span>
+                    </div>
+                    <span className="text-[10px] text-violet-300/70 mt-1 leading-tight">{sub}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <p className="text-violet-300/70 text-xs leading-relaxed mb-4">
-              Specialized in building executive decision cockpits with DAX calculations, interactive slicers,
-              and drill-down hierarchies.
+
+            <p className="text-violet-300/60 text-[11px] mt-4 pt-3 border-t border-white/10 text-center">
+              End-to-end telemetry from raw ingestion to model deployment.
             </p>
-            <div className="flex flex-wrap gap-1.5">
-              <span className="text-[10px] px-2.5 py-1 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-300 font-medium">
-                Power BI & DAX
-              </span>
-              <span className="text-[10px] px-2.5 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-300 font-medium">
-                Tableau Desktop
-              </span>
-              <span className="text-[10px] px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 font-medium">
-                Advanced Excel & VBA
-              </span>
-              <span className="text-[10px] px-2.5 py-1 rounded-md bg-purple-500/10 border border-purple-500/20 text-purple-300 font-medium">
-                Plotly & Streamlit
-              </span>
+          </TiltCard>
+
+          {/* Card 3: Quantitative Impact with Vibrant Stat Boxes */}
+          <TiltCard className="rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-cyan-500/50 transition-all">
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400">
+                    <Activity size={18} />
+                  </div>
+                  <div>
+                    <h4 className="text-white text-base font-bold">Quantitative Impact</h4>
+                    <p className="text-violet-300/60 text-xs">Key metrics achieved across workflows</p>
+                  </div>
+                </div>
+                <span className="text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-2 py-0.5 rounded-full">
+                  Metrics
+                </span>
+              </div>
+
+              <div className="space-y-3 mt-4">
+                {DASHBOARD_METRICS.map(({ icon: Icon, label, value, desc, color, tag }) => (
+                  <div
+                    key={label}
+                    className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-3 hover:border-violet-400/40 transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-lg bg-gradient-to-br ${color} bg-opacity-20 text-white border border-white/10`}>
+                        <Icon size={16} />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-white text-xs font-bold leading-tight">{label}</p>
+                          <span className="text-[9px] font-mono bg-white/10 text-violet-200 px-1 rounded">
+                            {tag}
+                          </span>
+                        </div>
+                        <p className="text-violet-300/60 text-[10px] mt-0.5">{desc}</p>
+                      </div>
+                    </div>
+                    <span
+                      className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 to-violet-200 font-mono shrink-0 pl-2"
+                      style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                    >
+                      {value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <p className="text-violet-300/60 text-[11px] mt-4 pt-3 border-t border-white/10 text-center">
+              Evaluated on rigorous cross-validation and client datasets.
+            </p>
+          </TiltCard>
+
+          {/* Card 4: Internship Skill Progression Area Chart (Spans 2 columns) */}
+          <TiltCard className="md:col-span-2 rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 sm:p-7 backdrop-blur-xl shadow-2xl hover:border-fuchsia-500/40 transition-all">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-1">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-fuchsia-500/20 to-violet-500/20 border border-fuchsia-500/30 text-fuchsia-400">
+                  <TrendingUp size={20} />
+                </div>
+                <div>
+                  <h4 className="text-white text-lg font-bold" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+                    Cumulative Internship Skill Velocity
+                  </h4>
+                  <p className="text-violet-300/60 text-xs">Hands-on impact scaling across 5 diverse internships</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-bold text-fuchsia-300 bg-fuchsia-500/15 border border-fuchsia-500/30 px-3 py-1 rounded-full shadow-sm">
+                  5 Roles Completed
+                </span>
+                <span className="text-xs font-mono font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-full">
+                  100% Industry Ready
+                </span>
+              </div>
+            </div>
+
+            <LineChartWidget milestones={INTERNSHIP_MILESTONES} />
+          </TiltCard>
+
+          {/* Card 5: BI Deliverables & Reporting Suite */}
+          <TiltCard className="rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-amber-500/40 transition-all">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400">
+                  <LayoutDashboard size={20} />
+                </div>
+                <div>
+                  <h4 className="text-white text-base font-bold">BI Deliverables</h4>
+                  <p className="text-violet-300/60 text-xs">Executive Decision Cockpits</p>
+                </div>
+              </div>
+
+              <p className="text-violet-200/80 text-xs leading-relaxed mt-3 mb-4">
+                Specialized in architecting executive dashboards with calculated DAX measures, automated ETL pipelines, drill-down filters, and dynamic storytelling visualizations.
+              </p>
+
+              <div className="space-y-2">
+                <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between">
+                  <span className="text-xs font-bold text-amber-200 flex items-center gap-1.5">
+                    <span>📊</span> Power BI & DAX
+                  </span>
+                  <span className="text-[10px] text-amber-300/80 font-mono">Student & Fintech BI</span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-between">
+                  <span className="text-xs font-bold text-blue-200 flex items-center gap-1.5">
+                    <span>📈</span> Tableau Desktop
+                  </span>
+                  <span className="text-[10px] text-blue-300/80 font-mono">Hexaind Exploratory</span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-between">
+                  <span className="text-xs font-bold text-emerald-200 flex items-center gap-1.5">
+                    <span>📑</span> Advanced Excel & VBA
+                  </span>
+                  <span className="text-[10px] text-emerald-300/80 font-mono">KPI & Financial Models</span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/25 flex items-center justify-between">
+                  <span className="text-xs font-bold text-purple-200 flex items-center gap-1.5">
+                    <span>⚡</span> Plotly & Streamlit
+                  </span>
+                  <span className="text-[10px] text-purple-300/80 font-mono">Mutual Fund Analytics</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-violet-300">
+              <span>Ready to ingest enterprise datasets</span>
+              <span className="text-fuchsia-400 font-bold">100% Live</span>
             </div>
           </TiltCard>
         </div>
