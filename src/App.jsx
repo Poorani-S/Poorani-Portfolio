@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as THREE from "three";
+import { motion, AnimatePresence, useScroll, useTransform, useInView } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Lenis from "lenis";
 import {
   Github, Linkedin, Mail, Phone, MapPin, Download, ExternalLink, Menu, X,
   GraduationCap, Award, Trophy, Languages as LangIcon, ArrowRight, Sparkles,
@@ -8,6 +12,15 @@ import {
   FolderGit2, Code2, Layers, BookOpen, Star, ShieldCheck, Compass,
   Search, FileSpreadsheet, Terminal, Zap, PieChart, LineChart
 } from "lucide-react";
+
+import Preloader from "./components/Preloader";
+import Cursor from "./components/Cursor";
+import Magnetic from "./components/Magnetic";
+import Reveal, { StaggerContainer, StaggerItem } from "./components/Reveal";
+import Counter from "./components/Counter";
+import Marquee from "./components/Marquee";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const NAV = [
   { id: "about", label: "About" },
@@ -21,10 +34,10 @@ const NAV = [
 ];
 
 const STATS = [
-  { value: "5", label: "Internships Completed", sub: "Fintech, AI, ML & BI" },
+  { value: "5", label: "Internships Completed", sub: "Data Analysis, AI, ML & BI" },
   { value: "10+", label: "Projects Shipped", sub: "Full-Stack, RAG & Analytics" },
   { value: "8.9", label: "B.Sc CGPA", sub: "Sri Ramakrishna College" },
-  { value: "10+", label: "Certifications", sub: "Deloitte, IBM, NPTEL, GUVI" },
+  { value: "16+", label: "Certifications", sub: "Deloitte, IBM, NPTEL, Infosys, GUVI" },
 ];
 
 const TOP_SKILLS = [
@@ -288,9 +301,12 @@ const CERTIFICATIONS = [
       { name: "Deloitte Australia – Data Analytics Job Simulation", issuer: "Forage" },
       { name: "IBM – Data Analysis with Python", issuer: "IBM" },
       { name: "IBM – Data Visualization", issuer: "IBM" },
+      { name: "IBM – Python for Data Science", issuer: "IBM" },
       { name: "IBM – Business Intelligence", issuer: "IBM" },
-      { name: "NoviTech – SQL for Data Analytics", issuer: "NoviTech" },
+      { name: "NoviTech – SQL", issuer: "NoviTech" },
       { name: "NPTEL – Database Management System", issuer: "NPTEL / IIT" },
+      { name: "Nasscom – Digital Engineering", issuer: "NASSCOM / FutureSkills Prime" },
+      { name: "MongoDB – Database Fundamentals", issuer: "MongoDB University" },
     ],
   },
   {
@@ -303,16 +319,27 @@ const CERTIFICATIONS = [
     ],
   },
   {
-    category: "Programming & Foundations",
+    category: "Programming",
     icon: Code2,
     color: "from-indigo-500 to-cyan-500",
     items: [
-      { name: "GUVI – Python Programming Masterclass", issuer: "GUVI" },
+      { name: "GUVI – Python Programming", issuer: "GUVI" },
+      { name: "Infosys – C Programming 101", issuer: "Infosys Springboard" },
+      { name: "Infosys – Computer Fundamentals", issuer: "Infosys Springboard" },
+    ],
+  },
+  {
+    category: "Cybersecurity",
+    icon: ShieldCheck,
+    color: "from-rose-500 to-red-600",
+    items: [
+      { name: "Deloitte Australia – Cyber Job Simulation", issuer: "Forage" },
+      { name: "IBM – Cybersecurity Fundamental", issuer: "IBM" },
     ],
   },
   {
     category: "Professional Services",
-    icon: ShieldCheck,
+    icon: Briefcase,
     color: "from-cyan-500 to-teal-500",
     items: [
       { name: "Monday.com – Professional Services Roles Certification Pathway", issuer: "Monday.com" },
@@ -352,6 +379,7 @@ const TECH_PILLARS = [
   { icon: GitBranch, label: "Git & Monday.com", sub: "Agile CI/CD & PM", color: "text-emerald-400", border: "border-emerald-500/30", bg: "bg-emerald-500/10" },
 ];
 
+/* ---------------- Particle Background Field ---------------- */
 function ParticleField() {
   const canvasRef = useRef(null);
   useEffect(() => {
@@ -466,16 +494,22 @@ function ParticleField() {
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />;
 }
 
-function GradientOrbs() {
+/* ---------------- Parallax Background Orbs ---------------- */
+function GradientOrbs({ scrollYProgress }) {
+  const y1 = useTransform(scrollYProgress, [0, 1], [0, -180]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [0, 240]);
+  const y3 = useTransform(scrollYProgress, [0, 1], [0, -120]);
+
   return (
     <>
-      <div className="orb orb-1" />
-      <div className="orb orb-2" />
-      <div className="orb orb-3" />
+      <motion.div style={{ y: y1 }} className="orb orb-1" />
+      <motion.div style={{ y: y2 }} className="orb orb-2" />
+      <motion.div style={{ y: y3 }} className="orb orb-3" />
     </>
   );
 }
 
+/* ---------------- Hero 3D (Interactive & Scroll-Scrubbed) ---------------- */
 function Hero3D() {
   const mountRef = useRef(null);
   useEffect(() => {
@@ -520,14 +554,32 @@ function Hero3D() {
     const stars = new THREE.Points(starGeo, starMat);
     group.add(stars);
 
-    let mouseX = 0,
-      mouseY = 0;
+    let targetMouseX = 0, targetMouseY = 0;
+    let mouseX = 0, mouseY = 0;
     function onMove(e) {
       const rect = mount.getBoundingClientRect();
-      mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-      mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+      targetMouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+      targetMouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
     }
     window.addEventListener("mousemove", onMove);
+
+    // ScrollTrigger scrub for scale & rotation
+    let scrollTriggerInstance = null;
+    try {
+      scrollTriggerInstance = ScrollTrigger.create({
+        trigger: mount,
+        start: "top center",
+        end: "bottom top",
+        scrub: 1.2,
+        onUpdate: (self) => {
+          const p = self.progress;
+          group.scale.set(1 + p * 0.15, 1 + p * 0.15, 1 + p * 0.15);
+          group.rotation.z = p * 0.6;
+        },
+      });
+    } catch (e) {
+      // safe fallback
+    }
 
     let raf;
     function animate() {
@@ -536,8 +588,14 @@ function Hero3D() {
       inner.rotation.y -= 0.004;
       inner.rotation.x += 0.002;
       stars.rotation.y += 0.0008;
-      group.rotation.y += (mouseX * 0.4 - group.rotation.y) * 0.03;
-      group.rotation.x += (-mouseY * 0.3 - group.rotation.x) * 0.03;
+
+      // Enhanced smooth mouse response
+      mouseX += (targetMouseX - mouseX) * 0.06;
+      mouseY += (targetMouseY - mouseY) * 0.06;
+
+      group.rotation.y = mouseX * 0.65;
+      group.rotation.x = -mouseY * 0.55;
+
       renderer.render(scene, camera);
       raf = requestAnimationFrame(animate);
     }
@@ -557,7 +615,8 @@ function Hero3D() {
       cancelAnimationFrame(raf);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("resize", onResize);
-      if (mount && renderer.domElement) {
+      if (scrollTriggerInstance) scrollTriggerInstance.kill();
+      if (mount && renderer.domElement && mount.contains(renderer.domElement)) {
         mount.removeChild(renderer.domElement);
       }
       icoGeo.dispose();
@@ -572,6 +631,7 @@ function Hero3D() {
   return <div ref={mountRef} className="w-full h-full" />;
 }
 
+/* ---------------- TiltCard with 3D Spring & Cursor Glow ---------------- */
 function TiltCard({ children, className = "" }) {
   const ref = useRef(null);
   const [style, setStyle] = useState({
@@ -622,17 +682,14 @@ function TiltCard({ children, className = "" }) {
   );
 }
 
+/* ---------------- Viewport-Triggered Bar Chart ---------------- */
 function BarChartWidget({ data }) {
-  const [mounted, setMounted] = useState(false);
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { once: true, margin: "-40px" });
   const [hoveredIdx, setHoveredIdx] = useState(null);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 150);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <div className="w-full flex flex-col justify-between pt-3">
+    <div ref={containerRef} className="w-full flex flex-col justify-between pt-3">
       {/* Visual Chart Track */}
       <div className="flex items-end justify-between gap-3 h-32 px-1 relative">
         {/* Grid Guidelines */}
@@ -662,7 +719,7 @@ function BarChartWidget({ data }) {
                 hoveredIdx === i ? "text-fuchsia-300 scale-110" : "text-violet-300/80"
               }`}
             >
-              {d.value}%
+              {isInView ? <Counter value={`${d.value}%`} duration={1.2 + i * 0.1} /> : "0%"}
             </span>
 
             {/* Bar Outer Track */}
@@ -671,8 +728,8 @@ function BarChartWidget({ data }) {
               <div
                 className={`w-full rounded-t-md bg-gradient-to-t ${d.color || "from-violet-600 via-fuchsia-500 to-pink-400"} transition-all duration-1000 ease-out relative`}
                 style={{
-                  height: mounted ? `${d.value}%` : "0%",
-                  transitionDelay: `${i * 100}ms`,
+                  height: isInView ? `${d.value}%` : "0%",
+                  transitionDelay: `${i * 120}ms`,
                   boxShadow: hoveredIdx === i ? "0 0 20px rgba(232,121,249,0.8)" : "0 0 10px rgba(217,70,239,0.35)",
                 }}
               >
@@ -695,14 +752,11 @@ function BarChartWidget({ data }) {
   );
 }
 
+/* ---------------- Viewport-Triggered Line Chart ---------------- */
 function LineChartWidget({ milestones }) {
-  const [mounted, setMounted] = useState(false);
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { once: true, margin: "-40px" });
   const [activeNode, setActiveNode] = useState(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 200);
-    return () => clearTimeout(timer);
-  }, []);
 
   const w = 540,
     h = 130,
@@ -722,7 +776,7 @@ function LineChartWidget({ milestones }) {
   const areaPath = `${linePath} L ${points[count - 1].x} ${h - 8} L ${points[0].x} ${h - 8} Z`;
 
   return (
-    <div className="w-full pt-2">
+    <div ref={containerRef} className="w-full pt-2">
       <div className="relative">
         <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-32 overflow-visible">
           <defs>
@@ -743,8 +797,8 @@ function LineChartWidget({ milestones }) {
             d={areaPath}
             fill="url(#velocityGradient)"
             style={{
-              opacity: mounted ? 1 : 0,
-              transition: "opacity 1s ease-out 0.3s",
+              opacity: isInView ? 1 : 0,
+              transition: "opacity 1.2s ease-out 0.4s",
             }}
           />
 
@@ -759,21 +813,27 @@ function LineChartWidget({ milestones }) {
             style={{
               filter: "drop-shadow(0 0 10px rgba(217,70,239,0.7))",
               strokeDasharray: 900,
-              strokeDashoffset: mounted ? 0 : 900,
-              transition: "stroke-dashoffset 1.4s ease-out",
+              strokeDashoffset: isInView ? 0 : 900,
+              transition: "stroke-dashoffset 1.6s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
           />
 
-          {/* Interactive Milestone Nodes */}
+          {/* Interactive Milestone Nodes (Popping in sequentially) */}
           {points.map((p, i) => (
             <g
               key={i}
               className="cursor-pointer group"
               onMouseEnter={() => setActiveNode(p)}
               onMouseLeave={() => setActiveNode(null)}
+              style={{
+                opacity: isInView ? 1 : 0,
+                transform: isInView ? "scale(1)" : "scale(0)",
+                transformOrigin: `${p.x}px ${p.y}px`,
+                transition: `all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) ${0.6 + i * 0.18}s`,
+              }}
             >
               {/* Pulsing ring for latest point */}
-              {i === count - 1 && mounted && (
+              {i === count - 1 && isInView && (
                 <circle cx={p.x} cy={p.y} r="9" fill="none" stroke="#38bdf8" strokeWidth="1.5">
                   <animate attributeName="r" values="6;13;6" dur="2s" repeatCount="indefinite" />
                   <animate attributeName="opacity" values="0.8;0;0.8" dur="2s" repeatCount="indefinite" />
@@ -831,730 +891,293 @@ function LineChartWidget({ milestones }) {
   );
 }
 
+/* ---------------- Skill Bar with Shimmer Sweep ---------------- */
 function SkillBar({ name, pct }) {
-  const [width, setWidth] = useState(0);
   const ref = useRef(null);
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setWidth(pct);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.4 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, [pct]);
+  const isInView = useInView(ref, { once: true, margin: "-40px" });
 
   return (
     <div ref={ref}>
       <div className="flex justify-between text-sm mb-2">
         <span className="text-violet-100 font-medium">{name}</span>
-        <span className="text-violet-400 font-mono text-xs font-semibold">{pct}%</span>
+        <span className="text-violet-400 font-mono text-xs font-semibold">
+          {isInView ? <Counter value={`${pct}%`} duration={1.5} /> : "0%"}
+        </span>
       </div>
-      <div className="h-2.5 rounded-full bg-white/5 overflow-hidden p-0.5 border border-white/5">
+      <div className="h-2.5 rounded-full bg-white/5 overflow-hidden p-0.5 border border-white/5 relative">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-fuchsia-500 via-violet-500 to-indigo-500 transition-all duration-1000 ease-out"
-          style={{ width: `${width}%` }}
-        />
+          className="h-full rounded-full bg-gradient-to-r from-fuchsia-500 via-violet-500 to-indigo-500 transition-all duration-1000 ease-out relative overflow-hidden"
+          style={{ width: isInView ? `${pct}%` : "0%" }}
+        >
+          {/* Shimmer sweep effect */}
+          {isInView && (
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer pointer-events-none" />
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
+/* ---------------- Section Label with Mask/Clip-Path Animation ---------------- */
 function SectionLabel({ eyebrow, title, subtitle }) {
   return (
     <div className="mb-12 text-center">
-      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-semibold tracking-wide uppercase mb-4 shadow-sm">
-        <Sparkles size={13} className="text-fuchsia-400" /> {eyebrow}
+      {/* Eyebrow */}
+      <Reveal direction="down" delay={0.05}>
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-semibold tracking-wide uppercase mb-4 shadow-sm">
+          <Sparkles size={13} className="text-fuchsia-400" /> {eyebrow}
+        </div>
+      </Reveal>
+
+      {/* Mask-revealed Title */}
+      <div className="overflow-hidden py-1">
+        <motion.h2
+          initial={{ y: "100%", opacity: 0 }}
+          whileInView={{ y: "0%", opacity: 1 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.7, ease: [0.21, 0.47, 0.32, 0.98], delay: 0.1 }}
+          className="text-3xl md:text-5xl font-extrabold text-white tracking-tight"
+          style={{ fontFamily: "Space Grotesk, sans-serif" }}
+        >
+          {title}
+        </motion.h2>
       </div>
-      <h2
-        className="text-3xl md:text-5xl font-extrabold text-white tracking-tight"
-        style={{ fontFamily: "Space Grotesk, sans-serif" }}
-      >
-        {title}
-      </h2>
+
+      {/* Subtitle */}
       {subtitle && (
-        <p className="mt-3 text-violet-200/70 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-          {subtitle}
-        </p>
+        <Reveal delay={0.2} y={20}>
+          <p className="mt-3 text-violet-200/70 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+            {subtitle}
+          </p>
+        </Reveal>
       )}
     </div>
   );
 }
 
-export default function App() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 30);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const scrollTo = (id) => {
-    setMenuOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
+/* ---------------- Hero Headline Word-by-Word Reveal ---------------- */
+function HeroHeadline() {
+  const words = ["Turning", "Raw", "Data", "Into"];
 
   return (
-    <div
-      className="relative min-h-screen bg-[#07040f] text-white overflow-x-hidden selection:bg-fuchsia-500 selection:text-white"
-      style={{ fontFamily: "Inter, ui-sans-serif, system-ui" }}
+    <h1
+      className="text-4xl sm:text-5xl lg:text-[62px] font-extrabold leading-[1.1] tracking-tight text-white"
+      style={{ fontFamily: "Space Grotesk, sans-serif" }}
     >
-      {/* Background Animated Atmosphere */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <GradientOrbs />
-        <ParticleField />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(60% 45% at 50% 0%, rgba(124,58,237,0.28), transparent 70%)",
-          }}
-        />
+      <div className="flex flex-wrap gap-x-3.5 gap-y-1">
+        {words.map((word, idx) => (
+          <span key={idx} className="overflow-hidden inline-block py-0.5">
+            <motion.span
+              className="inline-block"
+              initial={{ y: "115%", opacity: 0 }}
+              animate={{ y: "0%", opacity: 1 }}
+              transition={{
+                duration: 0.65,
+                ease: [0.21, 0.47, 0.32, 0.98],
+                delay: 0.1 + idx * 0.06,
+              }}
+            >
+              {word}
+            </motion.span>
+          </span>
+        ))}
       </div>
 
-      {/* Sticky Top Navbar */}
-      <header
-        className={`sticky top-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-[#07040f]/85 backdrop-blur-xl border-b border-white/10 shadow-2xl py-2"
-            : "py-4"
-        }`}
-      >
-        <div className="max-w-6xl mx-auto px-5 flex items-center justify-between">
-          <div
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="flex items-center gap-2.5 font-bold text-lg cursor-pointer group"
-            style={{ fontFamily: "Space Grotesk, sans-serif" }}
-          >
-            <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-fuchsia-500 via-purple-600 to-indigo-600 flex items-center justify-center text-xs font-black shadow-lg shadow-purple-500/30 group-hover:scale-105 transition-transform">
-              PS
-            </span>
-            <span className="tracking-wide">
-              Poorani <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-violet-400">S</span>
-            </span>
-          </div>
+      <span className="relative block mt-2 overflow-hidden py-1">
+        <motion.span
+          className="inline-block"
+          initial={{ y: "115%", opacity: 0 }}
+          animate={{ y: "0%", opacity: 1 }}
+          transition={{
+            duration: 0.8,
+            ease: [0.21, 0.47, 0.32, 0.98],
+            delay: 0.38,
+          }}
+        >
+          <span className="bg-gradient-to-r from-fuchsia-400 via-pink-300 to-violet-400 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(217,70,239,0.35)]">
+            Actionable Business
+          </span>{" "}
+          <span className="bg-gradient-to-r from-violet-300 via-indigo-300 to-cyan-300 bg-clip-text text-transparent">
+            Intelligence
+          </span>
+        </motion.span>
+      </span>
+    </h1>
+  );
+}
 
-          <nav className="hidden lg:flex items-center gap-1 bg-white/[0.04] border border-white/10 backdrop-blur-md rounded-full px-2 py-1.5 shadow-inner">
-            {NAV.map((n) => (
-              <button
-                key={n.id}
-                onClick={() => scrollTo(n.id)}
-                className="text-xs font-medium text-violet-100/80 hover:text-white px-3.5 py-1.5 rounded-full hover:bg-white/10 transition-colors"
-              >
-                {n.label}
-              </button>
-            ))}
-          </nav>
+/* ---------------- Hero Rotating / Typewriter Line ---------------- */
+function HeroRoles() {
+  const roles = [
+    "Data Analyst",
+    "BI Developer",
+    "ML Engineer",
+    "Data Analyst / BI Developer / ML Engineer",
+  ];
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [displayedText, setDisplayedText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
-          <div className="hidden sm:flex items-center gap-3">
-            <a
-              href="/resume.pdf"
-              download="Poorani_S_Resume.pdf"
-              className="flex items-center gap-2 border border-violet-500/40 bg-violet-500/10 text-violet-200 text-xs font-semibold px-4 py-2 rounded-full hover:bg-violet-500/20 hover:border-violet-400 transition-all"
-            >
-              <Download size={13} /> Resume
-            </a>
-            <button
-              onClick={() => scrollTo("contact")}
-              className="flex items-center gap-1.5 bg-gradient-to-r from-fuchsia-500 via-violet-600 to-indigo-600 text-white text-xs font-semibold px-4 py-2 rounded-full hover:opacity-95 shadow-md shadow-violet-500/25 transition-transform hover:scale-105"
-            >
-              Let's Connect <ArrowRight size={13} />
-            </button>
-          </div>
+  useEffect(() => {
+    const fullText = roles[currentIdx];
+    let timer;
 
-          <button
-            className="lg:hidden p-2 rounded-lg bg-white/5 border border-white/10 text-violet-200"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
+    if (!isDeleting) {
+      if (displayedText.length < fullText.length) {
+        timer = setTimeout(() => {
+          setDisplayedText(fullText.slice(0, displayedText.length + 1));
+        }, 60);
+      } else {
+        timer = setTimeout(() => {
+          setIsDeleting(true);
+        }, 2200);
+      }
+    } else {
+      if (displayedText.length > 0) {
+        timer = setTimeout(() => {
+          setDisplayedText(fullText.slice(0, displayedText.length - 1));
+        }, 30);
+      } else {
+        setIsDeleting(false);
+        setCurrentIdx((prev) => (prev + 1) % roles.length);
+      }
+    }
 
-        {/* Mobile Dropdown Nav */}
-        {menuOpen && (
-          <div className="lg:hidden bg-[#07040f]/95 backdrop-blur-2xl border-b border-white/10 px-6 py-5 flex flex-col gap-3 shadow-2xl animate-in slide-in-from-top-2">
-            {NAV.map((n) => (
-              <button
-                key={n.id}
-                onClick={() => scrollTo(n.id)}
-                className="text-left text-sm font-medium text-violet-100/90 py-1.5 hover:text-fuchsia-400"
-              >
-                {n.label}
-              </button>
-            ))}
-            <div className="pt-3 border-t border-white/10 flex gap-2">
-              <a
-                href="/resume.pdf"
-                download="Poorani_S_Resume.pdf"
-                className="flex-1 flex items-center justify-center gap-2 border border-white/15 py-2.5 rounded-full text-xs font-semibold"
-              >
-                <Download size={14} /> Resume
-              </a>
-              <button
-                onClick={() => scrollTo("contact")}
-                className="flex-1 bg-gradient-to-r from-fuchsia-500 to-violet-600 py-2.5 rounded-full text-xs font-semibold text-center"
-              >
-                Contact
-              </button>
-            </div>
-          </div>
-        )}
-      </header>
+    return () => clearTimeout(timer);
+  }, [displayedText, isDeleting, currentIdx]);
 
-      {/* Hero Section */}
-      <section className="relative z-10 max-w-6xl mx-auto px-5 pt-12 md:pt-16 pb-20 grid lg:grid-cols-12 gap-10 items-center">
-        <div className="lg:col-span-7">
-          {/* Enhanced Glowing Status Pill */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-fuchsia-500/40 bg-gradient-to-r from-fuchsia-500/15 via-purple-500/15 to-violet-500/15 text-fuchsia-200 text-xs sm:text-sm font-semibold mb-6 shadow-lg shadow-fuchsia-500/20 backdrop-blur-md hover:border-fuchsia-400 transition-all">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-fuchsia-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-fuchsia-400"></span>
-            </span>
-            <span>Final-Year B.Sc CS (Data Analytics)</span>
-            <span className="text-violet-400 font-bold">•</span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-fuchsia-200 to-indigo-200 font-bold">
-              Open for Data Analyst Roles
-            </span>
-          </div>
+  return (
+    <div className="inline-flex items-center gap-2 font-mono text-sm sm:text-base font-semibold text-violet-300 mt-3.5 mb-1 bg-violet-950/40 px-3.5 py-1.5 rounded-xl border border-violet-500/25">
+      <Sparkles size={14} className="text-fuchsia-400 animate-spin" style={{ animationDuration: "6s" }} />
+      <span>{displayedText}</span>
+      <span className="w-2 h-4 bg-fuchsia-400 animate-pulse" />
+    </div>
+  );
+}
 
-          {/* High-Impact Headline with Rich Gradient Layers */}
-          <h1
-            className="text-4xl sm:text-5xl lg:text-[62px] font-extrabold leading-[1.1] tracking-tight text-white"
-            style={{ fontFamily: "Space Grotesk, sans-serif" }}
-          >
-            Turning Raw Data Into{" "}
-            <span className="relative block mt-1">
-              <span className="bg-gradient-to-r from-fuchsia-400 via-pink-300 to-violet-400 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(217,70,239,0.35)]">
-                Actionable Business
-              </span>{" "}
-              <span className="bg-gradient-to-r from-violet-300 via-indigo-300 to-cyan-300 bg-clip-text text-transparent">
-                Intelligence
-              </span>
-            </span>
-          </h1>
+/* ---------------- Featured Projects Horizontal Pin-and-Scroll Section ---------------- */
+function FeaturedProjectsHorizontal() {
+  const containerRef = useRef(null);
+  const trackRef = useRef(null);
 
-          {/* Styled Introduction Card with Tagged Highlights */}
-          <div className="mt-7 text-violet-100/90 text-base sm:text-lg leading-relaxed max-w-2xl bg-white/[0.03] border border-white/10 rounded-2xl p-5 sm:p-6 backdrop-blur-md shadow-lg shadow-purple-950/20">
-            <p className="font-normal">
-              Hi, I'm <strong className="text-white font-bold text-lg bg-gradient-to-r from-fuchsia-400 to-violet-300 bg-clip-text text-transparent">Poorani S</strong> — a final-year Data Analytics student with hands-on internship experience across{" "}
-              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-fuchsia-500/15 border border-fuchsia-500/30 text-fuchsia-200 text-xs sm:text-sm font-semibold">Fintech</span>,{" "}
-              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-violet-500/15 border border-violet-500/30 text-violet-200 text-xs sm:text-sm font-semibold">Machine Learning</span>,{" "}
-              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-cyan-500/15 border border-cyan-500/30 text-cyan-200 text-xs sm:text-sm font-semibold">AI Full-Stack</span>, and{" "}
-              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-200 text-xs sm:text-sm font-semibold">Business Intelligence</span>.
-            </p>
-            <div className="mt-3.5 pt-3.5 border-t border-white/10 flex flex-wrap items-center gap-2 text-sm text-violet-200">
-              <span className="text-xs text-violet-300/70 font-medium">Core Toolchain:</span>
-              <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Python</span>
-              <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">SQL</span>
-              <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Power BI</span>
-              <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Tableau</span>
-              <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Excel</span>
-              <span className="text-xs text-fuchsia-300 font-medium ml-auto">→ Empowering Growth Decisions</span>
-            </div>
-          </div>
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
 
-          <div className="mt-8 flex flex-wrap gap-3.5 items-center">
-            <button
-              onClick={() => scrollTo("projects")}
-              className="flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 via-violet-600 to-indigo-600 px-6 py-3.5 rounded-full text-sm font-semibold shadow-lg shadow-violet-500/30 hover:shadow-fuchsia-500/40 hover:scale-105 transition-all"
-            >
-              Explore Projects <ArrowRight size={15} />
-            </button>
-            <a
-              href="/resume.pdf"
-              download="Poorani_S_Resume.pdf"
-              className="flex items-center gap-2 border border-white/20 bg-white/5 backdrop-blur-md px-6 py-3.5 rounded-full text-sm font-semibold hover:bg-white/10 hover:border-violet-400 transition-all"
-            >
-              <Download size={15} /> Download Resume
-            </a>
-            <a
-              href="https://github.com/Poorani-S"
-              target="_blank"
-              rel="noreferrer"
-              className="p-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:text-fuchsia-300 transition-colors"
-              title="GitHub Profile"
-            >
-              <Github size={17} />
-            </a>
-            <a
-              href="https://linkedin.com/in/poorani-s-046357340"
-              target="_blank"
-              rel="noreferrer"
-              className="p-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:text-fuchsia-300 transition-colors"
-              title="LinkedIn Profile"
-            >
-              <Linkedin size={17} />
-            </a>
-          </div>
+    let ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
 
-          {/* Key Metric Badges */}
-          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-            {STATS.map((s) => (
-              <TiltCard
-                key={s.label}
-                className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-4 text-center hover:border-fuchsia-500/40 transition-colors"
-              >
-                <p
-                  className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-fuchsia-400 to-violet-300 bg-clip-text text-transparent"
-                  style={{ fontFamily: "Space Grotesk, sans-serif" }}
-                >
-                  {s.value}
-                </p>
-                <p className="text-white text-xs font-semibold mt-1">{s.label}</p>
-                <p className="text-violet-300/60 text-[10px] mt-0.5">{s.sub}</p>
-              </TiltCard>
-            ))}
-          </div>
-        </div>
+      mm.add("(min-width: 1024px)", () => {
+        const track = trackRef.current;
+        if (!track) return;
 
-        {/* Interactive 3D Orbit Canvas */}
-        <div className="lg:col-span-5 relative h-[360px] md:h-[440px] flex items-center justify-center">
-          <Hero3D />
-          <div className="absolute -bottom-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl px-4 py-2 flex items-center gap-3 shadow-lg">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-violet-200">
-              Coimbatore, Tamil Nadu • <span className="text-fuchsia-300 font-mono font-semibold">poorani0307@gmail.com</span>
-            </span>
-          </div>
-        </div>
-      </section>
+        const totalScroll = track.scrollWidth - window.innerWidth + 140;
 
-      {/* About Section */}
-      <section id="about" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
-        <SectionLabel
-          eyebrow="Career Background"
-          title="About Me & Education"
-          subtitle="Analytical thinker passionate about building production-grade dashboards, predictive algorithms, and AI solutions."
-        />
+        gsap.to(track, {
+          x: () => -totalScroll,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            pin: true,
+            scrub: 1,
+            start: "top top+=75",
+            end: () => `+=${totalScroll * 1.15}`,
+            invalidateOnRefresh: true,
+          },
+        });
+      });
+    }, containerRef);
 
-        <div className="grid lg:grid-cols-12 gap-6">
-          {/* Career Objective & Bio */}
-          <TiltCard className="lg:col-span-7 rounded-3xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-md flex flex-col justify-between">
-            <div>
-              <div className="flex items-center gap-3 mb-5">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-fuchsia-500/20 to-violet-500/20 border border-fuchsia-500/30">
-                  <BookOpen size={20} className="text-fuchsia-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
-                    Career Objective
-                  </h3>
-                  <p className="text-violet-300/60 text-xs">Data Analyst & Machine Learning Developer</p>
-                </div>
-              </div>
+    return () => ctx.revert();
+  }, []);
 
-              <div className="space-y-4 text-violet-100/80 text-[15px] leading-relaxed">
-                <p className="border-l-2 border-fuchsia-500/60 pl-4 py-1 text-violet-100 font-medium italic bg-fuchsia-500/[0.04] rounded-r-lg">
-                  "Final-year B.Sc. Computer Science (Data Analytics) student with hands-on internship
-                  experience in data analysis, business intelligence, and machine learning. Proficient in
-                  Python, SQL, Power BI, Tableau, and Excel, with a proven ability to turn complex data
-                  into clear, actionable insights that support data-driven decisions."
-                </p>
-                <p>
-                  I bridge the gap between heavy data architectures and strategic business decisions.
-                  Whether structuring multi-table relational databases in MySQL, constructing KPI telemetry in
-                  Power BI / Tableau, or implementing Hybrid RAG architectures with FAISS and BM25, I focus on
-                  creating transparent, reliable, and high-impact data systems.
-                </p>
-                <p>
-                  Having completed 5 dynamic internships across FinTech, Industrial ML, Enterprise Software,
-                  and Data Analytics, I am well-prepared to contribute immediately to cross-functional data teams.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-8 pt-6 border-t border-white/10 grid sm:grid-cols-3 gap-3">
-              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                <p className="text-[11px] text-violet-300/60 uppercase tracking-wider font-semibold">Location</p>
-                <p className="text-white text-xs font-semibold mt-1">Coimbatore, India</p>
-              </div>
-              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                <p className="text-[11px] text-violet-300/60 uppercase tracking-wider font-semibold">Specialization</p>
-                <p className="text-white text-xs font-semibold mt-1">CS & Data Analytics</p>
-              </div>
-              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                <p className="text-[11px] text-violet-300/60 uppercase tracking-wider font-semibold">Availability</p>
-                <p className="text-emerald-400 text-xs font-semibold mt-1">Full-time / Immediate</p>
-              </div>
-            </div>
-          </TiltCard>
-
-          {/* Academic Timeline & Details */}
-          <div className="lg:col-span-5 space-y-4">
-            <h3
-              className="text-lg font-bold text-white mb-2 flex items-center gap-2"
-              style={{ fontFamily: "Space Grotesk, sans-serif" }}
-            >
-              <GraduationCap className="text-fuchsia-400" size={20} /> Academic History
-            </h3>
-
-            {EDUCATION.map((edu, idx) => (
-              <TiltCard
-                key={idx}
-                className={`rounded-2xl border p-5 backdrop-blur-md ${
-                  edu.current
-                    ? "border-fuchsia-500/40 bg-gradient-to-br from-fuchsia-500/10 to-violet-500/5 shadow-lg shadow-purple-500/10"
-                    : "border-white/10 bg-white/[0.02]"
-                }`}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
-                      {edu.period}
-                    </span>
-                    <h4 className="text-white font-bold text-sm mt-2">{edu.degree}</h4>
-                    <p className="text-violet-300/70 text-xs mt-1">{edu.institution}</p>
-                  </div>
-                  <span className="text-xs font-bold text-fuchsia-300 px-2.5 py-1 rounded-lg bg-fuchsia-500/10 border border-fuchsia-500/20 shrink-0">
-                    {edu.score}
-                  </span>
-                </div>
-              </TiltCard>
-            ))}
-
-            {/* Language & Communication Card */}
-            <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 backdrop-blur-md">
-              <div className="flex items-center gap-3 mb-2">
-                <LangIcon size={18} className="text-fuchsia-400" />
-                <h4 className="text-white font-semibold text-sm">Languages & Communication</h4>
-              </div>
-              <p className="text-violet-200/70 text-xs">
-                English (Fluent / Professional), Tamil (Native / Fluent), Hindi (Working proficiency)
-              </p>
-            </TiltCard>
-          </div>
-        </div>
-      </section>
-
-      {/* Skills & Technical Arsenal */}
-      <section id="skills" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
-        <SectionLabel
-          eyebrow="Technical Stack"
-          title="Skills & Technical Arsenal"
-          subtitle="Curated toolchain and core competencies aligned with end-to-end data analysis, modeling, and enterprise reporting."
-        />
-
-        {/* Top Skill Bars */}
-        <div className="grid md:grid-cols-2 gap-8 mb-16 rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8 backdrop-blur-md">
-          {TOP_SKILLS.map((s) => (
-            <SkillBar key={s.name} {...s} />
-          ))}
-        </div>
-
-        {/* Categorized Technical Skills */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {SKILL_CATEGORIES.map((cat) => {
-            const Icon = cat.icon;
-            return (
-              <TiltCard
-                key={cat.title}
-                className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md hover:border-violet-500/40 transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-fuchsia-400">
-                      <Icon size={18} />
-                    </div>
-                    <h4 className="text-white font-bold text-sm tracking-wide">{cat.title}</h4>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {cat.skills.map((item) => (
-                      <span
-                        key={item}
-                        className="text-xs px-3 py-1 rounded-lg bg-violet-500/10 border border-violet-500/20 text-violet-200 font-medium hover:bg-violet-500/20 hover:text-white transition-colors"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </TiltCard>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* IMPROVED ANALYTICS HUB / LIVE VISUALIZATIONS SECTION */}
-      <section id="dashboards" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
-        <SectionLabel
-          eyebrow="Live Analytics Telemetry"
-          title="Interactive Analytics Hub"
-          subtitle="A production-grade dashboard experience showcasing quantitative telemetry, architecture foundations, and progression velocity."
-        />
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* Card 1: Tool Proficiency with Rich Animated Bars */}
-          <TiltCard className="rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-fuchsia-500/50 transition-all">
-            <div>
-              <div className="flex items-center justify-between gap-2 mb-1">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-fuchsia-500/15 border border-fuchsia-500/30 text-fuchsia-400">
-                    <BarChart3 size={18} />
-                  </div>
-                  <div>
-                    <h4 className="text-white text-base font-bold">Analytics Tool Strength</h4>
-                    <p className="text-violet-300/60 text-xs">Hands-on project accuracy</p>
-                  </div>
-                </div>
-                <span className="text-[10px] font-mono font-bold bg-fuchsia-500/10 text-fuchsia-300 border border-fuchsia-500/20 px-2 py-0.5 rounded-full">
-                  Verified
-                </span>
-              </div>
-
-              <div className="mt-4">
-                <BarChartWidget data={TOOL_PROFICIENCY} />
-              </div>
-            </div>
-
-            <p className="text-violet-300/60 text-[11px] mt-4 pt-3 border-t border-white/10 text-center">
-              Benchmarked across data transformation, exploratory modeling & DAX queries.
-            </p>
-          </TiltCard>
-
-          {/* Card 2: Core Architecture Stack without truncation */}
-          <TiltCard className="rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-violet-500/50 transition-all">
-            <div>
-              <div className="flex items-center justify-between gap-2 mb-1">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-400">
-                    <Boxes size={18} />
-                  </div>
-                  <div>
-                    <h4 className="text-white text-base font-bold">Core Architecture Stack</h4>
-                    <p className="text-violet-300/60 text-xs">Technologies powering pipelines</p>
-                  </div>
-                </div>
-                <span className="text-[10px] font-mono font-bold bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-full">
-                  6 Pillars
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2.5 mt-5">
-                {TECH_PILLARS.map(({ icon: Icon, label, sub, color, border, bg }) => (
-                  <div
-                    key={label}
-                    className={`flex flex-col rounded-xl border ${border} ${bg} p-2.5 hover:scale-[1.03] transition-all cursor-pointer`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Icon size={16} className={color} />
-                      <span className="text-xs font-bold text-white leading-tight">{label}</span>
-                    </div>
-                    <span className="text-[10px] text-violet-300/70 mt-1 leading-tight">{sub}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <p className="text-violet-300/60 text-[11px] mt-4 pt-3 border-t border-white/10 text-center">
-              End-to-end telemetry from raw ingestion to model deployment.
-            </p>
-          </TiltCard>
-
-          {/* Card 3: Quantitative Impact with Vibrant Stat Boxes */}
-          <TiltCard className="rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-cyan-500/50 transition-all">
-            <div>
-              <div className="flex items-center justify-between gap-2 mb-1">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400">
-                    <Activity size={18} />
-                  </div>
-                  <div>
-                    <h4 className="text-white text-base font-bold">Quantitative Impact</h4>
-                    <p className="text-violet-300/60 text-xs">Key metrics achieved across workflows</p>
-                  </div>
-                </div>
-                <span className="text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-2 py-0.5 rounded-full">
-                  Metrics
-                </span>
-              </div>
-
-              <div className="space-y-3 mt-4">
-                {DASHBOARD_METRICS.map(({ icon: Icon, label, value, desc, color, tag }) => (
-                  <div
-                    key={label}
-                    className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-3 hover:border-violet-400/40 transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg bg-gradient-to-br ${color} bg-opacity-20 text-white border border-white/10`}>
-                        <Icon size={16} />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <p className="text-white text-xs font-bold leading-tight">{label}</p>
-                          <span className="text-[9px] font-mono bg-white/10 text-violet-200 px-1 rounded">
-                            {tag}
-                          </span>
-                        </div>
-                        <p className="text-violet-300/60 text-[10px] mt-0.5">{desc}</p>
-                      </div>
-                    </div>
-                    <span
-                      className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 to-violet-200 font-mono shrink-0 pl-2"
-                      style={{ fontFamily: "Space Grotesk, sans-serif" }}
-                    >
-                      {value}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <p className="text-violet-300/60 text-[11px] mt-4 pt-3 border-t border-white/10 text-center">
-              Evaluated on rigorous cross-validation and client datasets.
-            </p>
-          </TiltCard>
-
-          {/* Card 4: Internship Skill Progression Area Chart (Spans 2 columns) */}
-          <TiltCard className="md:col-span-2 rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 sm:p-7 backdrop-blur-xl shadow-2xl hover:border-fuchsia-500/40 transition-all">
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-1">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-fuchsia-500/20 to-violet-500/20 border border-fuchsia-500/30 text-fuchsia-400">
-                  <TrendingUp size={20} />
-                </div>
-                <div>
-                  <h4 className="text-white text-lg font-bold" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
-                    Cumulative Internship Skill Velocity
-                  </h4>
-                  <p className="text-violet-300/60 text-xs">Hands-on impact scaling across 5 diverse internships</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold text-fuchsia-300 bg-fuchsia-500/15 border border-fuchsia-500/30 px-3 py-1 rounded-full shadow-sm">
-                  5 Roles Completed
-                </span>
-                <span className="text-xs font-mono font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-full">
-                  100% Industry Ready
-                </span>
-              </div>
-            </div>
-
-            <LineChartWidget milestones={INTERNSHIP_MILESTONES} />
-          </TiltCard>
-
-          {/* Card 5: BI Deliverables & Reporting Suite */}
-          <TiltCard className="rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-amber-500/40 transition-all">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400">
-                  <LayoutDashboard size={20} />
-                </div>
-                <div>
-                  <h4 className="text-white text-base font-bold">BI Deliverables</h4>
-                  <p className="text-violet-300/60 text-xs">Executive Decision Cockpits</p>
-                </div>
-              </div>
-
-              <p className="text-violet-200/80 text-xs leading-relaxed mt-3 mb-4">
-                Specialized in architecting executive dashboards with calculated DAX measures, automated ETL pipelines, drill-down filters, and dynamic storytelling visualizations.
-              </p>
-
-              <div className="space-y-2">
-                <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between">
-                  <span className="text-xs font-bold text-amber-200 flex items-center gap-1.5">
-                    <span>📊</span> Power BI & DAX
-                  </span>
-                  <span className="text-[10px] text-amber-300/80 font-mono">Student & Fintech BI</span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-between">
-                  <span className="text-xs font-bold text-blue-200 flex items-center gap-1.5">
-                    <span>📈</span> Tableau Desktop
-                  </span>
-                  <span className="text-[10px] text-blue-300/80 font-mono">Hexaind Exploratory</span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-between">
-                  <span className="text-xs font-bold text-emerald-200 flex items-center gap-1.5">
-                    <span>📑</span> Advanced Excel & VBA
-                  </span>
-                  <span className="text-[10px] text-emerald-300/80 font-mono">KPI & Financial Models</span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/25 flex items-center justify-between">
-                  <span className="text-xs font-bold text-purple-200 flex items-center gap-1.5">
-                    <span>⚡</span> Plotly & Streamlit
-                  </span>
-                  <span className="text-[10px] text-purple-300/80 font-mono">Mutual Fund Analytics</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-violet-300">
-              <span>Ready to ingest enterprise datasets</span>
-              <span className="text-fuchsia-400 font-bold">100% Live</span>
-            </div>
-          </TiltCard>
-        </div>
-      </section>
-
-      {/* Internship Experience */}
-      <section id="experience" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
-        <SectionLabel
-          eyebrow="Work History"
-          title="Internship Experience"
-          subtitle="Real-world contributions across Fintech, Artificial Intelligence, Full-Stack engineering, and Data Analytics."
-        />
-
-        <div className="relative pl-6 md:pl-10 border-l border-violet-500/30 space-y-12">
-          {EXPERIENCE.map((exp, i) => (
-            <div key={i} className="relative group">
-              {/* Timeline Marker */}
-              <span className="absolute -left-[31px] md:-left-[47px] top-1.5 w-4 h-4 rounded-full bg-[#07040f] border-2 border-fuchsia-400 shadow-md shadow-fuchsia-500/40 group-hover:scale-125 transition-transform" />
-
-              <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8 backdrop-blur-md hover:border-violet-500/40 transition-all">
-                <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
-                  <div>
-                    <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-300">
-                      {exp.dates}
-                    </span>
-                    <h3
-                      className="text-xl font-bold text-white mt-2 group-hover:text-fuchsia-300 transition-colors"
-                      style={{ fontFamily: "Space Grotesk, sans-serif" }}
-                    >
-                      {exp.role}
-                    </h3>
-                    <p className="text-violet-300 font-medium text-sm">{exp.company}</p>
-                  </div>
-                  <span className="text-xs px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-200 font-medium">
-                    {exp.badge}
-                  </span>
-                </div>
-
-                <ul className="mt-4 space-y-2.5">
-                  {exp.bullets.map((bullet, bi) => (
-                    <li key={bi} className="text-violet-100/80 text-sm leading-relaxed flex gap-2.5 items-start">
-                      <CheckCircle2 size={15} className="text-fuchsia-400 shrink-0 mt-1" />
-                      <span>{bullet}</span>
-                    </li>
-                  ))}
-                </ul>
-              </TiltCard>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Featured & Additional Projects */}
-      <section id="projects" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
-        <SectionLabel
-          eyebrow="Portfolio Showcase"
-          title="Featured Projects"
-          subtitle="Production-tested systems ranging from Hybrid RAG chatbots and deep learning vision systems to financial analytics dashboards."
-        />
-
-        {/* Featured Projects Grid */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {FEATURED_PROJECTS.map((proj) => (
-            <TiltCard
+  return (
+    <div ref={containerRef} className="relative w-full">
+      {/* Desktop Horizontal Scroll Track */}
+      <div className="hidden lg:block overflow-hidden py-6">
+        <div ref={trackRef} className="flex gap-7 px-8 items-stretch will-change-transform">
+          {FEATURED_PROJECTS.map((proj, idx) => (
+            <div
               key={proj.title}
-              className="rounded-3xl border border-white/10 bg-white/[0.03] p-7 backdrop-blur-md hover:border-fuchsia-500/40 transition-all flex flex-col justify-between"
+              className="w-[480px] shrink-0 group transition-transform duration-300 hover:-translate-y-2"
             >
+              <TiltCard className="h-full rounded-3xl border border-white/10 bg-white/[0.03] p-7 backdrop-blur-md group-hover:border-fuchsia-500/50 transition-all flex flex-col justify-between shadow-xl">
+                <div>
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div>
+                      <span className="text-[10px] font-mono text-fuchsia-300 font-bold bg-fuchsia-500/10 px-2 py-0.5 rounded border border-fuchsia-500/20">
+                        Project #{idx + 1}
+                      </span>
+                      <h3
+                        className="text-xl font-bold text-white mt-1.5"
+                        style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                      >
+                        {proj.title}
+                      </h3>
+                    </div>
+                    <div className="flex gap-2.5 shrink-0">
+                      {proj.demo && (
+                        <a
+                          href={proj.demo}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-300 hover:text-fuchsia-300 hover:bg-violet-500/20 transition-all"
+                          title="Live Demo"
+                        >
+                          <ExternalLink size={15} />
+                        </a>
+                      )}
+                      {proj.repo && (
+                        <a
+                          href={proj.repo}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-300 hover:text-fuchsia-300 hover:bg-violet-500/20 transition-all"
+                          title="Source Code"
+                        >
+                          <Github size={15} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+
+                  <p className="text-fuchsia-400 text-xs font-semibold mb-3">{proj.tagline}</p>
+                  <p className="text-violet-100/75 text-sm leading-relaxed mb-4">{proj.description}</p>
+
+                  {proj.highlights && (
+                    <div className="mb-4 space-y-1.5">
+                      {proj.highlights.map((hl, i) => (
+                        <div key={i} className="flex items-center gap-2 text-xs text-violet-300/80">
+                          <span className="w-1.5 h-1.5 rounded-full bg-fuchsia-400" />
+                          <span>{hl}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-4 border-t border-white/10 flex flex-wrap gap-2">
+                  {proj.tech.map((t) => (
+                    <span
+                      key={t}
+                      className="text-[11px] px-2.5 py-1 rounded-lg bg-violet-500/10 border border-violet-500/20 text-violet-200 font-medium group-hover:border-fuchsia-500/30 transition-all"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </TiltCard>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Mobile & Tablet Fallback Grid */}
+      <div className="lg:hidden grid sm:grid-cols-2 gap-6">
+        {FEATURED_PROJECTS.map((proj) => (
+          <Reveal key={proj.title}>
+            <TiltCard className="h-full rounded-3xl border border-white/10 bg-white/[0.03] p-7 backdrop-blur-md hover:border-fuchsia-500/40 transition-all flex flex-col justify-between">
               <div>
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <h3
@@ -1615,33 +1238,870 @@ export default function App() {
                 ))}
               </div>
             </TiltCard>
+          </Reveal>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ========================================================================= */
+/*                              MAIN APP                                     */
+/* ========================================================================= */
+export default function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [navVisible, setNavVisible] = useState(true);
+  const [activeSection, setActiveSection] = useState("about");
+  const lenisRef = useRef(null);
+
+  const { scrollY, scrollYProgress } = useScroll();
+
+  // Initialize Lenis + GSAP ScrollTrigger
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!prefersReducedMotion) {
+      const lenis = new Lenis({
+        duration: 1.15,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+        touchMultiplier: 1.75,
+      });
+      lenisRef.current = lenis;
+
+      lenis.on("scroll", ScrollTrigger.update);
+
+      const tickerCallback = (time) => {
+        lenis.raf(time * 1000);
+      };
+      gsap.ticker.add(tickerCallback);
+      gsap.ticker.lagSmoothing(0);
+
+      return () => {
+        gsap.ticker.remove(tickerCallback);
+        lenis.destroy();
+      };
+    }
+  }, []);
+
+  // Track Navbar Scroll Direction (Hide on scroll down, show on scroll up)
+  useEffect(() => {
+    let lastY = window.scrollY;
+
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      setScrolled(currentY > 30);
+
+      if (currentY > 140) {
+        if (currentY > lastY) {
+          setNavVisible(false); // scrolling down
+        } else {
+          setNavVisible(true); // scrolling up
+        }
+      } else {
+        setNavVisible(true);
+      }
+      lastY = currentY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Track Active Section for Navbar Sliding Pill
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { threshold: 0.25 }
+    );
+
+    NAV.forEach((item) => {
+      const el = document.getElementById(item.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Smooth scroll handler using Lenis
+  const scrollTo = (id) => {
+    setMenuOpen(false);
+    const element = document.getElementById(id);
+    if (!element) return;
+
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(element, { offset: -70 });
+    } else {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  return (
+    <div
+      className="relative min-h-screen bg-[#07040f] text-white overflow-x-hidden selection:bg-fuchsia-500 selection:text-white"
+      style={{ fontFamily: "Inter, ui-sans-serif, system-ui" }}
+    >
+      {/* Session Preloader */}
+      <Preloader />
+
+      {/* Interactive Custom Cursor */}
+      <Cursor />
+
+      {/* Top Scroll Progress Bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-fuchsia-500 via-violet-500 to-indigo-500 z-[999] origin-left"
+        style={{ scaleX: scrollYProgress }}
+      />
+
+      {/* Background Animated Atmosphere & Parallax Orbs */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <GradientOrbs scrollYProgress={scrollYProgress} />
+        <ParticleField />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(60% 45% at 50% 0%, rgba(124,58,237,0.28), transparent 70%)",
+          }}
+        />
+      </div>
+
+      {/* Sticky Smart Navbar */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-400 ${
+          navVisible ? "translate-y-0" : "-translate-y-full"
+        } ${
+          scrolled
+            ? "bg-[#07040f]/85 backdrop-blur-xl border-b border-white/10 shadow-2xl py-2"
+            : "py-4"
+        }`}
+      >
+        <div className="max-w-6xl mx-auto px-5 flex items-center justify-between">
+          <div
+            onClick={() => {
+              if (lenisRef.current) lenisRef.current.scrollTo(0);
+              else window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="flex items-center gap-2.5 font-bold text-lg cursor-pointer group"
+            style={{ fontFamily: "Space Grotesk, sans-serif" }}
+          >
+            <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-fuchsia-500 via-purple-600 to-indigo-600 flex items-center justify-center text-xs font-black shadow-lg shadow-purple-500/30 group-hover:scale-105 transition-transform">
+              PS
+            </span>
+            <span className="tracking-wide">
+              Poorani <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-violet-400">S</span>
+            </span>
+          </div>
+
+          <nav className="hidden lg:flex items-center gap-1 bg-white/[0.04] border border-white/10 backdrop-blur-md rounded-full px-2 py-1.5 shadow-inner relative">
+            {NAV.map((n) => {
+              const isActive = activeSection === n.id;
+              return (
+                <button
+                  key={n.id}
+                  onClick={() => scrollTo(n.id)}
+                  className={`text-xs font-medium px-3.5 py-1.5 rounded-full transition-colors relative ${
+                    isActive ? "text-white font-semibold" : "text-violet-100/80 hover:text-white"
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavPill"
+                      className="absolute inset-0 rounded-full bg-gradient-to-r from-fuchsia-500/30 to-violet-500/30 border border-fuchsia-400/40 shadow-sm"
+                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{n.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          <div className="hidden sm:flex items-center gap-3">
+            <Magnetic strength={0.3}>
+              <a
+                href="/resume.pdf"
+                download="Poorani_S_Resume.pdf"
+                className="flex items-center gap-2 border border-violet-500/40 bg-violet-500/10 text-violet-200 text-xs font-semibold px-4 py-2 rounded-full hover:bg-violet-500/20 hover:border-violet-400 transition-all"
+              >
+                <Download size={13} /> Resume
+              </a>
+            </Magnetic>
+            <Magnetic strength={0.3}>
+              <button
+                onClick={() => scrollTo("contact")}
+                className="flex items-center gap-1.5 bg-gradient-to-r from-fuchsia-500 via-violet-600 to-indigo-600 text-white text-xs font-semibold px-4 py-2 rounded-full hover:opacity-95 shadow-md shadow-violet-500/25 transition-transform hover:scale-105"
+              >
+                Let's Connect <ArrowRight size={13} />
+              </button>
+            </Magnetic>
+          </div>
+
+          <button
+            className="lg:hidden p-2 rounded-lg bg-white/5 border border-white/10 text-violet-200"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+
+        {/* Mobile Dropdown Nav */}
+        {menuOpen && (
+          <div className="lg:hidden bg-[#07040f]/95 backdrop-blur-2xl border-b border-white/10 px-6 py-5 flex flex-col gap-3 shadow-2xl animate-in slide-in-from-top-2">
+            {NAV.map((n) => (
+              <button
+                key={n.id}
+                onClick={() => scrollTo(n.id)}
+                className={`text-left text-sm font-medium py-1.5 transition-colors ${
+                  activeSection === n.id ? "text-fuchsia-400 font-bold" : "text-violet-100/90 hover:text-fuchsia-400"
+                }`}
+              >
+                {n.label}
+              </button>
+            ))}
+            <div className="pt-3 border-t border-white/10 flex gap-2">
+              <a
+                href="/resume.pdf"
+                download="Poorani_S_Resume.pdf"
+                className="flex-1 flex items-center justify-center gap-2 border border-white/15 py-2.5 rounded-full text-xs font-semibold"
+              >
+                <Download size={14} /> Resume
+              </a>
+              <button
+                onClick={() => scrollTo("contact")}
+                className="flex-1 bg-gradient-to-r from-fuchsia-500 to-violet-600 py-2.5 rounded-full text-xs font-semibold text-center"
+              >
+                Contact
+              </button>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* Hero Section */}
+      <section className="relative z-10 max-w-6xl mx-auto px-5 pt-28 md:pt-36 pb-20 grid lg:grid-cols-12 gap-10 items-center">
+        <div className="lg:col-span-7">
+          {/* Enhanced Glowing Status Pill */}
+          <Reveal delay={0.05} y={20}>
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-fuchsia-500/40 bg-gradient-to-r from-fuchsia-500/15 via-purple-500/15 to-violet-500/15 text-fuchsia-200 text-xs sm:text-sm font-semibold mb-5 shadow-lg shadow-fuchsia-500/20 backdrop-blur-md hover:border-fuchsia-400 transition-all">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-fuchsia-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-fuchsia-400"></span>
+              </span>
+              <span>Final-Year B.Sc CS (Data Analytics)</span>
+              <span className="text-violet-400 font-bold">•</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-fuchsia-200 to-indigo-200 font-bold">
+                Open for Data Analyst Roles
+              </span>
+            </div>
+          </Reveal>
+
+          {/* High-Impact Headline with Word-by-Word Stagger Mask */}
+          <HeroHeadline />
+
+          {/* Dynamic Typing Line */}
+          <Reveal delay={0.45} y={15}>
+            <HeroRoles />
+          </Reveal>
+
+          {/* Styled Introduction Card with Tagged Highlights */}
+          <Reveal delay={0.5} y={25}>
+            <div className="mt-5 text-violet-100/90 text-base sm:text-lg leading-relaxed max-w-2xl bg-white/[0.03] border border-white/10 rounded-2xl p-5 sm:p-6 backdrop-blur-md shadow-lg shadow-purple-950/20">
+              <p className="font-normal">
+                Hi, I'm <strong className="text-white font-bold text-lg bg-gradient-to-r from-fuchsia-400 to-violet-300 bg-clip-text text-transparent">Poorani S</strong> — a final-year Data Analytics student with hands-on internship experience across{" "}
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-fuchsia-500/15 border border-fuchsia-500/30 text-fuchsia-200 text-xs sm:text-sm font-semibold">Fintech</span>,{" "}
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-violet-500/15 border border-violet-500/30 text-violet-200 text-xs sm:text-sm font-semibold">Machine Learning</span>,{" "}
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-cyan-500/15 border border-cyan-500/30 text-cyan-200 text-xs sm:text-sm font-semibold">AI Full-Stack</span>, and{" "}
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-200 text-xs sm:text-sm font-semibold">Business Intelligence</span>.
+              </p>
+              <div className="mt-3.5 pt-3.5 border-t border-white/10 flex flex-wrap items-center gap-2 text-sm text-violet-200">
+                <span className="text-xs text-violet-300/70 font-medium">Core Toolchain:</span>
+                <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Python</span>
+                <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">SQL</span>
+                <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Power BI</span>
+                <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Tableau</span>
+                <span className="text-xs px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-semibold">Excel</span>
+                <span className="text-xs text-fuchsia-300 font-medium ml-auto">→ Empowering Growth Decisions</span>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* Action Buttons with Magnetic Effect */}
+          <Reveal delay={0.6} y={25}>
+            <div className="mt-8 flex flex-wrap gap-3.5 items-center">
+              <Magnetic strength={0.35}>
+                <button
+                  onClick={() => scrollTo("projects")}
+                  className="flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 via-violet-600 to-indigo-600 px-6 py-3.5 rounded-full text-sm font-semibold shadow-lg shadow-violet-500/30 hover:shadow-fuchsia-500/40 hover:scale-105 transition-all"
+                >
+                  Explore Projects <ArrowRight size={15} />
+                </button>
+              </Magnetic>
+              <Magnetic strength={0.35}>
+                <a
+                  href="/resume.pdf"
+                  download="Poorani_S_Resume.pdf"
+                  className="flex items-center gap-2 border border-white/20 bg-white/5 backdrop-blur-md px-6 py-3.5 rounded-full text-sm font-semibold hover:bg-white/10 hover:border-violet-400 transition-all"
+                >
+                  <Download size={15} /> Download Resume
+                </a>
+              </Magnetic>
+              <Magnetic strength={0.4}>
+                <a
+                  href="https://github.com/Poorani-S"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:text-fuchsia-300 transition-colors inline-block"
+                  title="GitHub Profile"
+                >
+                  <Github size={17} />
+                </a>
+              </Magnetic>
+              <Magnetic strength={0.4}>
+                <a
+                  href="https://linkedin.com/in/poorani-s-046357340"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:text-fuchsia-300 transition-colors inline-block"
+                  title="LinkedIn Profile"
+                >
+                  <Linkedin size={17} />
+                </a>
+              </Magnetic>
+            </div>
+          </Reveal>
+
+          {/* Key Metric Badges with Smooth Upward Counter */}
+          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+            {STATS.map((s, idx) => (
+              <Reveal key={s.label} delay={0.7 + idx * 0.08} y={30}>
+                <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-4 text-center hover:border-fuchsia-500/40 transition-colors">
+                  <p
+                    className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-fuchsia-400 to-violet-300 bg-clip-text text-transparent"
+                    style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                  >
+                    <Counter value={s.value} duration={1.6} />
+                  </p>
+                  <p className="text-white text-xs font-semibold mt-1">{s.label}</p>
+                  <p className="text-violet-300/60 text-[10px] mt-0.5">{s.sub}</p>
+                </TiltCard>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+
+        {/* Interactive 3D Orbit Canvas */}
+        <Reveal delay={0.3} scale={0.92} className="lg:col-span-5 relative h-[360px] md:h-[440px] flex items-center justify-center">
+          <Hero3D />
+          <div className="absolute -bottom-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl px-4 py-2 flex items-center gap-3 shadow-lg">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs text-violet-200">
+              Coimbatore, Tamil Nadu • <span className="text-fuchsia-300 font-mono font-semibold">poorani0307@gmail.com</span>
+            </span>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* Infinite Tool Marquee Strip */}
+      <Marquee speed={32} />
+
+      {/* About Section */}
+      <section id="about" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
+        <SectionLabel
+          eyebrow="Career Background"
+          title="About Me & Education"
+          subtitle="Analytical thinker passionate about building production-grade dashboards, predictive algorithms, and AI solutions."
+        />
+
+        <div className="grid lg:grid-cols-12 gap-6">
+          {/* Career Objective & Bio */}
+          <Reveal className="lg:col-span-7" direction="left">
+            <TiltCard className="h-full rounded-3xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-md flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-fuchsia-500/20 to-violet-500/20 border border-fuchsia-500/30">
+                    <BookOpen size={20} className="text-fuchsia-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+                      Career Objective
+                    </h3>
+                    <p className="text-violet-300/60 text-xs">Data Analyst & Machine Learning Developer</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4 text-violet-100/80 text-[15px] leading-relaxed">
+                  <p className="border-l-2 border-fuchsia-500/60 pl-4 py-1 text-violet-100 font-medium italic bg-fuchsia-500/[0.04] rounded-r-lg">
+                    "Final-year B.Sc. Computer Science (Data Analytics) student with hands-on internship
+                    experience in data analysis, business intelligence, and machine learning. Proficient in
+                    Python, SQL, Power BI, Tableau, and Excel, with a proven ability to turn complex data
+                    into clear, actionable insights that support data-driven decisions."
+                  </p>
+                  <p>
+                    I bridge the gap between heavy data architectures and strategic business decisions.
+                    Whether structuring multi-table relational databases in MySQL, constructing KPI telemetry in
+                    Power BI / Tableau, or implementing Hybrid RAG architectures with FAISS and BM25, I focus on
+                    creating transparent, reliable, and high-impact data systems.
+                  </p>
+                  <p>
+                    Having completed 5 dynamic internships across FinTech, Industrial ML, Enterprise Software,
+                    and Data Analytics, I am well-prepared to contribute immediately to cross-functional data teams.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-white/10 grid sm:grid-cols-3 gap-3">
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                  <p className="text-[11px] text-violet-300/60 uppercase tracking-wider font-semibold">Location</p>
+                  <p className="text-white text-xs font-semibold mt-1">Coimbatore, India</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                  <p className="text-[11px] text-violet-300/60 uppercase tracking-wider font-semibold">Specialization</p>
+                  <p className="text-white text-xs font-semibold mt-1">CS & Data Analytics</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                  <p className="text-[11px] text-violet-300/60 uppercase tracking-wider font-semibold">Availability</p>
+                  <p className="text-emerald-400 text-xs font-semibold mt-1">Full-time / Immediate</p>
+                </div>
+              </div>
+            </TiltCard>
+          </Reveal>
+
+          {/* Academic Timeline & Details */}
+          <div className="lg:col-span-5 space-y-4">
+            <Reveal direction="right">
+              <h3
+                className="text-lg font-bold text-white mb-2 flex items-center gap-2"
+                style={{ fontFamily: "Space Grotesk, sans-serif" }}
+              >
+                <GraduationCap className="text-fuchsia-400" size={20} /> Academic History
+              </h3>
+            </Reveal>
+
+            {EDUCATION.map((edu, idx) => (
+              <Reveal key={idx} delay={idx * 0.1} direction="right">
+                <TiltCard
+                  className={`rounded-2xl border p-5 backdrop-blur-md ${
+                    edu.current
+                      ? "border-fuchsia-500/40 bg-gradient-to-br from-fuchsia-500/10 to-violet-500/5 shadow-lg shadow-purple-500/10"
+                      : "border-white/10 bg-white/[0.02]"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                        {edu.period}
+                      </span>
+                      <h4 className="text-white font-bold text-sm mt-2">{edu.degree}</h4>
+                      <p className="text-violet-300/70 text-xs mt-1">{edu.institution}</p>
+                    </div>
+                    <span className="text-xs font-bold text-fuchsia-300 px-2.5 py-1 rounded-lg bg-fuchsia-500/10 border border-fuchsia-500/20 shrink-0">
+                      {edu.score}
+                    </span>
+                  </div>
+                </TiltCard>
+              </Reveal>
+            ))}
+
+            {/* Language & Communication Card */}
+            <Reveal delay={0.35} direction="right">
+              <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 backdrop-blur-md">
+                <div className="flex items-center gap-3 mb-2">
+                  <LangIcon size={18} className="text-fuchsia-400" />
+                  <h4 className="text-white font-semibold text-sm">Languages & Communication</h4>
+                </div>
+                <p className="text-violet-200/70 text-xs">
+                  English (Fluent / Professional), Tamil (Native / Fluent), Hindi (Working proficiency)
+                </p>
+              </TiltCard>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* Skills & Technical Arsenal */}
+      <section id="skills" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
+        <SectionLabel
+          eyebrow="Technical Stack"
+          title="Skills & Technical Arsenal"
+          subtitle="Curated toolchain and core competencies aligned with end-to-end data analysis, modeling, and enterprise reporting."
+        />
+
+        {/* Top Skill Bars with Shimmer Sweep */}
+        <Reveal>
+          <div className="grid md:grid-cols-2 gap-8 mb-16 rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8 backdrop-blur-md shadow-lg">
+            {TOP_SKILLS.map((s) => (
+              <SkillBar key={s.name} {...s} />
+            ))}
+          </div>
+        </Reveal>
+
+        {/* Categorized Technical Skills with Sine Wobble Chips */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {SKILL_CATEGORIES.map((cat, idx) => {
+            const Icon = cat.icon;
+            return (
+              <Reveal key={cat.title} delay={idx * 0.08} y={30}>
+                <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md hover:border-violet-500/40 transition-all flex flex-col justify-between h-full">
+                  <div>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-fuchsia-400">
+                        <Icon size={18} />
+                      </div>
+                      <h4 className="text-white font-bold text-sm tracking-wide">{cat.title}</h4>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {cat.skills.map((item, itemIdx) => (
+                        <span
+                          key={item}
+                          style={{ animationDelay: `${(idx + itemIdx) * 0.3}s` }}
+                          className="animate-wobble text-xs px-3 py-1 rounded-lg bg-violet-500/10 border border-violet-500/20 text-violet-200 font-medium hover:bg-violet-500/25 hover:text-white hover:scale-105 transition-all cursor-default"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </TiltCard>
+              </Reveal>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Reversing Tool Marquee Strip */}
+      <Marquee speed={28} reverse={true} />
+
+      {/* LIVE ANALYTICS HUB SECTION */}
+      <section id="dashboards" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
+        <SectionLabel
+          eyebrow="Live Analytics Telemetry"
+          title="Interactive Analytics Hub"
+          subtitle="A production-grade dashboard experience showcasing quantitative telemetry, architecture foundations, and progression velocity."
+        />
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Card 1: Tool Proficiency */}
+          <Reveal y={30} delay={0.05}>
+            <TiltCard className="h-full rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-fuchsia-500/50 transition-all">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-fuchsia-500/15 border border-fuchsia-500/30 text-fuchsia-400">
+                      <BarChart3 size={18} />
+                    </div>
+                    <div>
+                      <h4 className="text-white text-base font-bold">Analytics Tool Strength</h4>
+                      <p className="text-violet-300/60 text-xs">Hands-on project accuracy</p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold bg-fuchsia-500/10 text-fuchsia-300 border border-fuchsia-500/20 px-2 py-0.5 rounded-full">
+                    Verified
+                  </span>
+                </div>
+
+                <div className="mt-4">
+                  <BarChartWidget data={TOOL_PROFICIENCY} />
+                </div>
+              </div>
+
+              <p className="text-violet-300/60 text-[11px] mt-4 pt-3 border-t border-white/10 text-center">
+                Benchmarked across data transformation, exploratory modeling & DAX queries.
+              </p>
+            </TiltCard>
+          </Reveal>
+
+          {/* Card 2: Core Architecture Stack */}
+          <Reveal y={30} delay={0.15}>
+            <TiltCard className="h-full rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-violet-500/50 transition-all">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-400">
+                      <Boxes size={18} />
+                    </div>
+                    <div>
+                      <h4 className="text-white text-base font-bold">Core Architecture Stack</h4>
+                      <p className="text-violet-300/60 text-xs">Technologies powering pipelines</p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-full">
+                    6 Pillars
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5 mt-5">
+                  {TECH_PILLARS.map(({ icon: Icon, label, sub, color, border, bg }) => (
+                    <div
+                      key={label}
+                      className={`flex flex-col rounded-xl border ${border} ${bg} p-2.5 hover:scale-[1.03] transition-all cursor-pointer`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Icon size={16} className={color} />
+                        <span className="text-xs font-bold text-white leading-tight">{label}</span>
+                      </div>
+                      <span className="text-[10px] text-violet-300/70 mt-1 leading-tight">{sub}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <p className="text-violet-300/60 text-[11px] mt-4 pt-3 border-t border-white/10 text-center">
+                End-to-end telemetry from raw ingestion to model deployment.
+              </p>
+            </TiltCard>
+          </Reveal>
+
+          {/* Card 3: Quantitative Impact */}
+          <Reveal y={30} delay={0.25}>
+            <TiltCard className="h-full rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-cyan-500/50 transition-all">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400">
+                      <Activity size={18} />
+                    </div>
+                    <div>
+                      <h4 className="text-white text-base font-bold">Quantitative Impact</h4>
+                      <p className="text-violet-300/60 text-xs">Key metrics achieved across workflows</p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-2 py-0.5 rounded-full">
+                    Metrics
+                  </span>
+                </div>
+
+                <div className="space-y-3 mt-4">
+                  {DASHBOARD_METRICS.map(({ icon: Icon, label, value, desc, color, tag }) => (
+                    <div
+                      key={label}
+                      className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-3 hover:border-violet-400/40 transition-all"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg bg-gradient-to-br ${color} bg-opacity-20 text-white border border-white/10`}>
+                          <Icon size={16} />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-white text-xs font-bold leading-tight">{label}</p>
+                            <span className="text-[9px] font-mono bg-white/10 text-violet-200 px-1 rounded">
+                              {tag}
+                            </span>
+                          </div>
+                          <p className="text-violet-300/60 text-[10px] mt-0.5">{desc}</p>
+                        </div>
+                      </div>
+                      <span
+                        className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 to-violet-200 font-mono shrink-0 pl-2"
+                        style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                      >
+                        <Counter value={value} duration={1.8} />
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <p className="text-violet-300/60 text-[11px] mt-4 pt-3 border-t border-white/10 text-center">
+                Evaluated on rigorous cross-validation and client datasets.
+              </p>
+            </TiltCard>
+          </Reveal>
+
+          {/* Card 4: Cumulative Skill Velocity Area Chart */}
+          <Reveal className="md:col-span-2" y={30} delay={0.1}>
+            <TiltCard className="rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 sm:p-7 backdrop-blur-xl shadow-2xl hover:border-fuchsia-500/40 transition-all">
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-1">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-fuchsia-500/20 to-violet-500/20 border border-fuchsia-500/30 text-fuchsia-400">
+                    <TrendingUp size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-white text-lg font-bold" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+                      Cumulative Internship Skill Velocity
+                    </h4>
+                    <p className="text-violet-300/60 text-xs">Hands-on impact scaling across 5 diverse internships</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-bold text-fuchsia-300 bg-fuchsia-500/15 border border-fuchsia-500/30 px-3 py-1 rounded-full shadow-sm">
+                    5 Roles Completed
+                  </span>
+                  <span className="text-xs font-mono font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-full">
+                    100% Industry Ready
+                  </span>
+                </div>
+              </div>
+
+              <LineChartWidget milestones={INTERNSHIP_MILESTONES} />
+            </TiltCard>
+          </Reveal>
+
+          {/* Card 5: BI Deliverables & Reporting Suite */}
+          <Reveal y={30} delay={0.2}>
+            <TiltCard className="h-full rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between hover:border-amber-500/40 transition-all">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400">
+                    <LayoutDashboard size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-white text-base font-bold">BI Deliverables</h4>
+                    <p className="text-violet-300/60 text-xs">Executive Decision Cockpits</p>
+                  </div>
+                </div>
+
+                <p className="text-violet-200/80 text-xs leading-relaxed mt-3 mb-4">
+                  Specialized in architecting executive dashboards with calculated DAX measures, automated ETL pipelines, drill-down filters, and dynamic storytelling visualizations.
+                </p>
+
+                <div className="space-y-2">
+                  <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-200 flex items-center gap-1.5">
+                      <span>📊</span> Power BI & DAX
+                    </span>
+                    <span className="text-[10px] text-amber-300/80 font-mono">Student & Fintech BI</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-between">
+                    <span className="text-xs font-bold text-blue-200 flex items-center gap-1.5">
+                      <span>📈</span> Tableau Desktop
+                    </span>
+                    <span className="text-[10px] text-blue-300/80 font-mono">Hexaind Exploratory</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-between">
+                    <span className="text-xs font-bold text-emerald-200 flex items-center gap-1.5">
+                      <span>📑</span> Advanced Excel & VBA
+                    </span>
+                    <span className="text-[10px] text-emerald-300/80 font-mono">KPI & Financial Models</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/25 flex items-center justify-between">
+                    <span className="text-xs font-bold text-purple-200 flex items-center gap-1.5">
+                      <span>⚡</span> Plotly & Streamlit
+                    </span>
+                    <span className="text-[10px] text-purple-300/80 font-mono">Mutual Fund Analytics</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-violet-300">
+                <span>Ready to ingest enterprise datasets</span>
+                <span className="text-fuchsia-400 font-bold">100% Live</span>
+              </div>
+            </TiltCard>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Internship Experience with Scroll-Drawn Timeline */}
+      <section id="experience" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
+        <SectionLabel
+          eyebrow="Work History"
+          title="Internship Experience"
+          subtitle="Real-world contributions across Fintech, Artificial Intelligence, Full-Stack engineering, and Data Analytics."
+        />
+
+        <div className="relative pl-6 md:pl-10 space-y-12">
+          {/* Scroll-Drawn Vertical Timeline Line */}
+          <div className="absolute left-0 top-3 bottom-3 w-[2px] bg-white/10 overflow-hidden">
+            <motion.div
+              className="w-full h-full bg-gradient-to-b from-fuchsia-500 via-violet-500 to-indigo-500 origin-top"
+              initial={{ scaleY: 0 }}
+              whileInView={{ scaleY: 1 }}
+              viewport={{ once: false, margin: "-100px" }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+            />
+          </div>
+
+          {EXPERIENCE.map((exp, i) => (
+            <div key={i} className="relative group">
+              {/* Timeline Marker Dot with Spring Pop */}
+              <motion.span
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ type: "spring", stiffness: 400, damping: 20, delay: i * 0.1 }}
+                className="absolute -left-[31px] md:-left-[47px] top-1.5 w-4 h-4 rounded-full bg-[#07040f] border-2 border-fuchsia-400 shadow-md shadow-fuchsia-500/40 group-hover:scale-125 transition-transform"
+              />
+
+              {/* Card Sliding from Alternating Sides */}
+              <Reveal direction={i % 2 === 0 ? "left" : "right"} delay={i * 0.1}>
+                <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8 backdrop-blur-md hover:border-violet-500/40 transition-all">
+                  <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
+                    <div>
+                      <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-300">
+                        {exp.dates}
+                      </span>
+                      <h3
+                        className="text-xl font-bold text-white mt-2 group-hover:text-fuchsia-300 transition-colors"
+                        style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                      >
+                        {exp.role}
+                      </h3>
+                      <p className="text-violet-300 font-medium text-sm">{exp.company}</p>
+                    </div>
+                    <span className="text-xs px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-200 font-medium">
+                      {exp.badge}
+                    </span>
+                  </div>
+
+                  <ul className="mt-4 space-y-2.5">
+                    {exp.bullets.map((bullet, bi) => (
+                      <li key={bi} className="text-violet-100/80 text-sm leading-relaxed flex gap-2.5 items-start">
+                        <CheckCircle2 size={15} className="text-fuchsia-400 shrink-0 mt-1" />
+                        <span>{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </TiltCard>
+              </Reveal>
+            </div>
           ))}
         </div>
+      </section>
+
+      {/* Featured & Additional Projects */}
+      <section id="projects" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
+        <SectionLabel
+          eyebrow="Portfolio Showcase"
+          title="Featured Projects"
+          subtitle="Production-tested systems ranging from Hybrid RAG chatbots and deep learning vision systems to financial analytics dashboards."
+        />
+
+        {/* 7 Featured Projects with Desktop Pin-and-Scroll & Mobile Responsive Grid */}
+        <FeaturedProjectsHorizontal />
 
         {/* Additional Projects Section */}
         <div className="mt-16">
-          <div className="flex items-center gap-3 mb-6">
-            <FolderGit2 className="text-fuchsia-400" size={20} />
-            <h3
-              className="text-xl font-bold text-white tracking-wide"
-              style={{ fontFamily: "Space Grotesk, sans-serif" }}
-            >
-              Additional Projects & Systems
-            </h3>
-          </div>
+          <Reveal>
+            <div className="flex items-center gap-3 mb-6">
+              <FolderGit2 className="text-fuchsia-400" size={20} />
+              <h3
+                className="text-xl font-bold text-white tracking-wide"
+                style={{ fontFamily: "Space Grotesk, sans-serif" }}
+              >
+                Additional Projects & Systems
+              </h3>
+            </div>
+          </Reveal>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {ADDITIONAL_PROJECTS.map((p) => (
-              <TiltCard
-                key={p.title}
-                className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 backdrop-blur-md flex flex-col justify-between hover:border-violet-500/30"
-              >
-                <div>
-                  <h4 className="text-white text-sm font-bold mb-1.5">{p.title}</h4>
-                  <p className="text-violet-200/70 text-xs leading-relaxed mb-3">{p.desc}</p>
-                </div>
-                <p className="text-fuchsia-400/90 text-[11px] font-mono font-medium">{p.tech}</p>
-              </TiltCard>
+            {ADDITIONAL_PROJECTS.map((p, idx) => (
+              <Reveal key={p.title} delay={idx * 0.08} y={30}>
+                <TiltCard className="h-full rounded-2xl border border-white/10 bg-white/[0.02] p-5 backdrop-blur-md flex flex-col justify-between hover:border-violet-500/30">
+                  <div>
+                    <h4 className="text-white text-sm font-bold mb-1.5">{p.title}</h4>
+                    <p className="text-violet-200/70 text-xs leading-relaxed mb-3">{p.desc}</p>
+                  </div>
+                  <p className="text-fuchsia-400/90 text-[11px] font-mono font-medium">{p.tech}</p>
+                </TiltCard>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -1659,34 +2119,33 @@ export default function App() {
           {LEADERSHIP_ACHIEVEMENTS.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <TiltCard
-                key={idx}
-                className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md hover:border-fuchsia-500/40 transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2.5 rounded-xl bg-gradient-to-br from-fuchsia-500/20 to-violet-500/20 border border-fuchsia-500/30 text-fuchsia-300">
-                        <Icon size={20} />
+              <Reveal key={idx} delay={idx * 0.1} y={30}>
+                <TiltCard className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md hover:border-fuchsia-500/40 transition-all flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-xl bg-gradient-to-br from-fuchsia-500/20 to-violet-500/20 border border-fuchsia-500/30 text-fuchsia-300">
+                          <Icon size={20} />
+                        </div>
+                        <div>
+                          <h4
+                            className="text-white font-bold text-base"
+                            style={{ fontFamily: "Space Grotesk, sans-serif" }}
+                          >
+                            {item.title}
+                          </h4>
+                          <p className="text-violet-300/70 text-xs mt-0.5">{item.organization}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4
-                          className="text-white font-bold text-base"
-                          style={{ fontFamily: "Space Grotesk, sans-serif" }}
-                        >
-                          {item.title}
-                        </h4>
-                        <p className="text-violet-300/70 text-xs mt-0.5">{item.organization}</p>
-                      </div>
+                      <span className="text-[10px] font-mono font-semibold px-2.5 py-1 rounded-full bg-violet-500/15 border border-violet-500/30 text-violet-300 shrink-0">
+                        {item.type}
+                      </span>
                     </div>
-                    <span className="text-[10px] font-mono font-semibold px-2.5 py-1 rounded-full bg-violet-500/15 border border-violet-500/30 text-violet-300 shrink-0">
-                      {item.type}
-                    </span>
-                  </div>
 
-                  <p className="text-violet-100/75 text-xs leading-relaxed mt-2">{item.description}</p>
-                </div>
-              </TiltCard>
+                    <p className="text-violet-100/75 text-xs leading-relaxed mt-2">{item.description}</p>
+                  </div>
+                </TiltCard>
+              </Reveal>
             );
           })}
         </div>
@@ -1697,38 +2156,37 @@ export default function App() {
         <SectionLabel
           eyebrow="Verified Credentials"
           title="Professional Certifications"
-          subtitle="Credentials from Deloitte, IBM, NPTEL, GUVI, and Monday.com confirming expertise across analytics, AI, and engineering."
+          subtitle="Credentials from Deloitte, IBM, NPTEL, Infosys, GUVI, UiPath, and Monday.com confirming expertise across analytics, AI, programming, and cybersecurity."
         />
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {CERTIFICATIONS.map((cert) => {
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {CERTIFICATIONS.map((cert, idx) => {
             const Icon = cert.icon;
             return (
-              <TiltCard
-                key={cert.category}
-                className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md hover:border-violet-500/40 transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`p-2.5 rounded-2xl bg-gradient-to-br ${cert.color} bg-opacity-20 border border-white/15 text-white`}>
-                      <Icon size={18} />
+              <Reveal key={cert.category} delay={idx * 0.08} y={35}>
+                <TiltCard className="h-full rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md hover:border-violet-500/40 transition-all flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className={`p-2.5 rounded-2xl bg-gradient-to-br ${cert.color} bg-opacity-20 border border-white/15 text-white`}>
+                        <Icon size={18} />
+                      </div>
+                      <h4 className="text-white font-bold text-sm">{cert.category}</h4>
                     </div>
-                    <h4 className="text-white font-bold text-sm">{cert.category}</h4>
-                  </div>
 
-                  <ul className="space-y-3">
-                    {cert.items.map((item, i) => (
-                      <li key={i} className="flex items-start gap-2 text-xs">
-                        <Award size={14} className="text-fuchsia-400 shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-violet-100 font-medium leading-snug">{item.name}</p>
-                          <p className="text-violet-300/50 text-[10px] mt-0.5 font-mono">{item.issuer}</p>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </TiltCard>
+                    <ul className="space-y-3">
+                      {cert.items.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-xs">
+                          <Award size={14} className="text-fuchsia-400 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-violet-100 font-medium leading-snug">{item.name}</p>
+                            <p className="text-violet-300/50 text-[10px] mt-0.5 font-mono">{item.issuer}</p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </TiltCard>
+              </Reveal>
             );
           })}
         </div>
@@ -1736,86 +2194,104 @@ export default function App() {
 
       {/* Contact & Connect Section */}
       <section id="contact" className="relative z-10 max-w-6xl mx-auto px-5 py-20">
-        <TiltCard className="rounded-3xl border border-white/15 bg-gradient-to-br from-violet-900/30 via-fuchsia-900/20 to-indigo-950/40 p-8 md:p-14 text-center backdrop-blur-2xl shadow-2xl relative overflow-hidden">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-300 text-xs font-semibold mb-6">
-            <Sparkles size={12} /> Open For Immediate Opportunities
-          </div>
+        <Reveal y={40}>
+          <TiltCard className="rounded-3xl border border-white/15 bg-gradient-to-br from-violet-900/30 via-fuchsia-900/20 to-indigo-950/40 p-8 md:p-14 text-center backdrop-blur-2xl shadow-2xl relative overflow-hidden">
+            {/* Subtle animated light highlight */}
+            <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-fuchsia-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 bg-violet-500/10 rounded-full blur-3xl pointer-events-none" />
 
-          <h2
-            className="text-3xl md:text-5xl font-extrabold text-white max-w-2xl mx-auto leading-tight"
-            style={{ fontFamily: "Space Grotesk, sans-serif" }}
-          >
-            Let's Build Impactful,{" "}
-            <span className="bg-gradient-to-r from-fuchsia-400 to-violet-300 bg-clip-text text-transparent">
-              Data-Driven Systems
-            </span>
-          </h2>
-
-          <p className="text-violet-200/80 mt-4 max-w-lg mx-auto text-sm md:text-base leading-relaxed">
-            Interested in discussing data analytics, business intelligence dashboards, or machine learning engineering?
-            Feel free to reach out directly.
-          </p>
-
-          <div className="mt-8 flex flex-wrap justify-center gap-3.5">
-            <a
-              href="mailto:poorani0307@gmail.com"
-              className="flex items-center gap-2.5 border border-white/15 bg-white/5 backdrop-blur-md px-5 py-3 rounded-full text-xs sm:text-sm font-medium hover:bg-white/10 hover:border-fuchsia-400 transition-all"
-            >
-              <Mail size={15} className="text-fuchsia-400" /> poorani0307@gmail.com
-            </a>
-            <a
-              href="tel:6380045604"
-              className="flex items-center gap-2.5 border border-white/15 bg-white/5 backdrop-blur-md px-5 py-3 rounded-full text-xs sm:text-sm font-medium hover:bg-white/10 hover:border-fuchsia-400 transition-all"
-            >
-              <Phone size={15} className="text-fuchsia-400" /> +91 6380045604
-            </a>
-            <div className="flex items-center gap-2.5 border border-white/10 bg-white/[0.02] px-5 py-3 rounded-full text-xs text-violet-300/80">
-              <MapPin size={15} className="text-fuchsia-400 shrink-0" /> No 3, Kamarajar street, Saibaba Colony, Coimbatore
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-300 text-xs font-semibold mb-6">
+              <Sparkles size={12} /> Open For Immediate Opportunities
             </div>
-          </div>
 
-          <div className="mt-6 flex justify-center gap-4">
-            <a
-              href="https://linkedin.com/in/poorani-s-046357340"
-              target="_blank"
-              rel="noreferrer"
-              className="w-12 h-12 rounded-full border border-white/15 bg-white/5 flex items-center justify-center hover:bg-white/15 hover:text-fuchsia-400 transition-all"
-              title="LinkedIn Profile"
+            <h2
+              className="text-3xl md:text-5xl font-extrabold text-white max-w-2xl mx-auto leading-tight"
+              style={{ fontFamily: "Space Grotesk, sans-serif" }}
             >
-              <Linkedin size={18} />
-            </a>
-            <a
-              href="https://github.com/Poorani-S"
-              target="_blank"
-              rel="noreferrer"
-              className="w-12 h-12 rounded-full border border-white/15 bg-white/5 flex items-center justify-center hover:bg-white/15 hover:text-fuchsia-400 transition-all"
-              title="GitHub Profile"
-            >
-              <Github size={18} />
-            </a>
-          </div>
+              Let's Build Impactful,{" "}
+              <span className="bg-gradient-to-r from-fuchsia-400 via-pink-300 to-violet-300 bg-clip-text text-transparent animate-gradient-text">
+                Data-Driven Systems
+              </span>
+            </h2>
 
-          <div className="mt-8">
-            <a
-              href="/resume.pdf"
-              download="Poorani_S_Resume.pdf"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 via-violet-600 to-indigo-600 px-7 py-3.5 rounded-full text-sm font-bold shadow-xl shadow-purple-500/30 hover:scale-105 transition-all"
-            >
-              <Download size={16} /> Download Official Resume (PDF)
-            </a>
-          </div>
-        </TiltCard>
+            <p className="text-violet-200/80 mt-4 max-w-lg mx-auto text-sm md:text-base leading-relaxed">
+              Interested in discussing data analytics, business intelligence dashboards, or machine learning engineering?
+              Feel free to reach out directly.
+            </p>
+
+            <div className="mt-8 flex flex-wrap justify-center gap-3.5">
+              <Magnetic strength={0.3}>
+                <a
+                  href="mailto:poorani0307@gmail.com"
+                  className="flex items-center gap-2.5 border border-white/15 bg-white/5 backdrop-blur-md px-5 py-3 rounded-full text-xs sm:text-sm font-medium hover:bg-white/10 hover:border-fuchsia-400 transition-all"
+                >
+                  <Mail size={15} className="text-fuchsia-400" /> poorani0307@gmail.com
+                </a>
+              </Magnetic>
+              <Magnetic strength={0.3}>
+                <a
+                  href="tel:6380045604"
+                  className="flex items-center gap-2.5 border border-white/15 bg-white/5 backdrop-blur-md px-5 py-3 rounded-full text-xs sm:text-sm font-medium hover:bg-white/10 hover:border-fuchsia-400 transition-all"
+                >
+                  <Phone size={15} className="text-fuchsia-400" /> +91 6380045604
+                </a>
+              </Magnetic>
+              <div className="flex items-center gap-2.5 border border-white/10 bg-white/[0.02] px-5 py-3 rounded-full text-xs text-violet-300/80">
+                <MapPin size={15} className="text-fuchsia-400 shrink-0" /> No 3, Kamarajar street, Saibaba Colony, Coimbatore
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-center gap-4">
+              <Magnetic strength={0.4}>
+                <a
+                  href="https://linkedin.com/in/poorani-s-046357340"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-12 h-12 rounded-full border border-white/15 bg-white/5 flex items-center justify-center hover:bg-white/15 hover:text-fuchsia-400 transition-all inline-flex"
+                  title="LinkedIn Profile"
+                >
+                  <Linkedin size={18} />
+                </a>
+              </Magnetic>
+              <Magnetic strength={0.4}>
+                <a
+                  href="https://github.com/Poorani-S"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-12 h-12 rounded-full border border-white/15 bg-white/5 flex items-center justify-center hover:bg-white/15 hover:text-fuchsia-400 transition-all inline-flex"
+                  title="GitHub Profile"
+                >
+                  <Github size={18} />
+                </a>
+              </Magnetic>
+            </div>
+
+            <div className="mt-8">
+              <Magnetic strength={0.35}>
+                <a
+                  href="/resume.pdf"
+                  download="Poorani_S_Resume.pdf"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-fuchsia-500 via-violet-600 to-indigo-600 px-7 py-3.5 rounded-full text-sm font-bold shadow-xl shadow-purple-500/30 hover:scale-105 transition-all"
+                >
+                  <Download size={16} /> Download Official Resume (PDF)
+                </a>
+              </Magnetic>
+            </div>
+          </TiltCard>
+        </Reveal>
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 max-w-6xl mx-auto px-5 py-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-violet-300/50">
-        <p>&copy; {new Date().getFullYear()} Poorani S — Data Analyst Portfolio</p>
-        <p className="flex items-center gap-2">
-          <span>Designed & Developed with React & Three.js</span>
-          <span>•</span>
-          <span className="text-violet-400">Coimbatore, India</span>
-        </p>
-      </footer>
+      <Reveal y={20}>
+        <footer className="relative z-10 max-w-6xl mx-auto px-5 py-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-violet-300/50">
+          <p>&copy; {new Date().getFullYear()} Poorani S — Data Analyst Portfolio</p>
+          <p className="flex items-center gap-2">
+            <span>Designed & Developed with React & Three.js</span>
+            <span>•</span>
+            <span className="text-violet-400">Coimbatore, India</span>
+          </p>
+        </footer>
+      </Reveal>
     </div>
   );
 }
